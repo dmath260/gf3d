@@ -55,7 +55,7 @@ int main(int argc,char *argv[])
     //game init
     srand(SDL_GetTicks());
     slog_sync();
-    bg = gf2d_sprite_load_image("images/bg_flat.png");
+    bg = gf2d_sprite_load_image("images/bg_free.png");
     gf2d_mouse_load("actors/mouse.actor");
     // main game loop    
     while(!_done)

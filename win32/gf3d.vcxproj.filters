@@ -31,6 +31,24 @@
     <Filter Include="Header Files\sjson">
       <UniqueIdentifier>{8c74e3af-afb2-43a3-afa3-d7ada26ed8ff}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files\Shaders">
+      <UniqueIdentifier>{2dbd551f-9c1d-4a4b-a139-e91e6ff5773a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Shaders\Sprite">
+      <UniqueIdentifier>{aeddfea2-7a84-41ba-9170-846539163a72}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Shaders\Models">
+      <UniqueIdentifier>{75bed405-b1b4-4ed4-b1ee-ae2209bf6c5c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Config">
+      <UniqueIdentifier>{13a0c5be-c68c-45a5-bb09-2fa2795ac9d8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\pmd">
+      <UniqueIdentifier>{625558da-91a8-4fad-9a96-75b74213b4a3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Models">
+      <UniqueIdentifier>{cd2a99e5-6dc4-4edc-bcd1-5e5917ff4a3b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\gfc\simple_logger\include\simple_logger.h">
@@ -192,6 +210,9 @@
     <ClInclude Include="..\gfc\simple_json\include\simple_json_value.h">
       <Filter>Header Files\sjson</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\model.h">
+      <Filter>Header Files\gf3d</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\gfc\simple_logger\src\simple_logger.c">
@@ -344,5 +365,34 @@
     <ClCompile Include="..\gfc\simple_json\src\simple_json_string.c">
       <Filter>Source Files\sjson</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\gf3d_mesh.c">
+      <Filter>Source Files\gf3d</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\model.c">
+      <Filter>Source Files\pmd</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\shaders\sprite.frag">
+      <Filter>Resource Files\Shaders\Sprite</Filter>
+    </None>
+    <None Include="..\shaders\sprite.vert">
+      <Filter>Resource Files\Shaders\Sprite</Filter>
+    </None>
+    <None Include="..\shaders\model.frag">
+      <Filter>Resource Files\Shaders\Models</Filter>
+    </None>
+    <None Include="..\shaders\model.vert">
+      <Filter>Resource Files\Shaders\Models</Filter>
+    </None>
+    <None Include="..\config\model_pipeline.cfg">
+      <Filter>Resource Files\Config</Filter>
+    </None>
+    <None Include="..\config\overlay_pipeline.cfg">
+      <Filter>Resource Files\Config</Filter>
+    </None>
+    <None Include="..\models\dino.model">
+      <Filter>Resource Files\Models</Filter>
+    </None>
   </ItemGroup>
 </Project>

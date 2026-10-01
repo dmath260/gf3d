@@ -1,0 +1,5 @@
+glslangValidator.exe -V sprite.frag -o sprite_frag.spv
+glslangValidator.exe -V sprite.vert -o sprite_vert.spv
+
+glslangValidator.exe -V model.frag -o model_frag.spv
+glslangValidator.exe -V model.vert -o model_vert.spv

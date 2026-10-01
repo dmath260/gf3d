@@ -151,7 +151,7 @@ ObjData *gf3d_obj_load_from_file(const char *filename)
     mem = gfc_pak_file_extract(filename,&fileSize);
     
     if (!mem)return NULL;
-        
+    
     obj = (ObjData*)gfc_allocate_array(sizeof(ObjData),1);
     if (!obj)return NULL;
     
@@ -166,7 +166,6 @@ ObjData *gf3d_obj_load_from_file(const char *filename)
     obj->faceTexels = (Face *)gfc_allocate_array(sizeof(Face),obj->face_count);
     
     gf3d_obj_load_get_data_from_file(obj, mem,fileSize);
-    
     
     gf3d_obj_get_bounds(obj);
     gf3d_obj_load_reorg(obj);

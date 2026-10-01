@@ -12,7 +12,6 @@
 
 #include "gf3d_pipeline.h"
 
-
 //forward declaration:
 typedef struct ObjData_S ObjData;
 
@@ -35,7 +34,7 @@ typedef struct
 
 typedef struct
 {
-    Uint16  verts[3];
+    Uint16  verts[3]; // change to Uint32 if it crashes for too many polygons
 }Face;
 
 typedef struct
@@ -53,7 +52,6 @@ typedef struct
 {
     GFC_TextLine        filename;
     Uint32              _refCount;
-    Uint8               _inuse;
     GFC_List           *primitives;
     GFC_Box             bounds;
 }Mesh;
@@ -121,65 +119,12 @@ VkVertexInputBindingDescription * gf3d_mesh_get_bind_description();
 void gf3d_mesh_free(Mesh *mesh);
 
 /**
- * @brief needs to be called once at the beginning of each render frame
- */
-void gf3d_mesh_reset_pipes();
-
-/**
- * @brief called to submit all draw commands to the mesh pipelines
- */
-void gf3d_mesh_submit_pipe_commands();
-
-/**
- * @brief get the current command buffer for the mesh system
- */
-VkCommandBuffer gf3d_mesh_get_model_command_buffer();
-
-
-/**
  * @brief queue up a render for the current draw frame
  * @param mesh the mesh to render
- * @param pipe the pipeline to use
- * @param uboData the data to use to draw the mesh
- * @param texture texture data to use
+ * @param pipe the pipeline
+ * @param uboData buffer data
+ * @param texture the texture
  */
-void gf3d_mesh_queue_render(Mesh *mesh,Pipeline *pipe,void *uboData,Texture *texture);
-
-
-/**
- * @brief adds a mesh to the render pass rendered as an outline highlight
- * @note: must be called within the render pass
- * @param mesh the mesh to render
- * @param com the command pool to use to handle the request we are rendering with
- */
-void gf3d_mesh_render(Mesh *mesh,VkCommandBuffer commandBuffer, VkDescriptorSet * descriptorSet);
-
-/**
- * @brief render a mesh through a given pipeline
- */
-void gf3d_mesh_render_generic(Mesh *mesh,Pipeline *pipe,VkDescriptorSet * descriptorSet);
-
-/**
- * @brief create a mesh's internal buffers based on vertices
- * @param primitive the mesh primitive to populate
- * @note the primitive must have the objData set and it must have be organizes in buffer order
- */
-void gf3d_mesh_create_vertex_buffer_from_vertices(MeshPrimitive *primitive);
-
-/**
- * @brief get the pipeline that is used to render basic 3d meshes
- * @return NULL on error or the pipeline in question
- */
-Pipeline *gf3d_mesh_get_pipeline();
-
-/**
- * @brief given a model matrix and basic color, build the meshUBO needed to render a model
- * @param modelMat the model Matrix
- * @param colorMod the color for the UBO
- */
-MeshUBO gf3d_mesh_get_ubo(
-    GFC_Matrix4 modelMat,
-    GFC_Color colorMod);
-
+void gf3d_mesh_queue_render(Mesh* mesh, Pipeline* pipe, void* uboData, Texture* texture);
 
 #endif

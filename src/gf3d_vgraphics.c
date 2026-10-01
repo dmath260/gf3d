@@ -31,6 +31,8 @@
 
 #include "gf3d_vgraphics.h"
 
+#include "model.h"
+
 
 typedef struct
 {
@@ -104,7 +106,7 @@ void gf3d_vgraphics_setup(
 
 void gf3d_vgraphics_init(const char *config)
 {
-    Pipeline *renderPipe= NULL;
+    Pipeline *renderPipe2D = NULL, *renderPipe3D = NULL;
     SJson *json,*setup;
     const char *windowName = NULL;
     GFC_Vector2D resolution = {1024,768};
@@ -199,12 +201,17 @@ void gf3d_vgraphics_init(const char *config)
     gf3d_vgraphics.graphicsCommandPool = gf3d_command_graphics_pool_setup(gf3d_swapchain_get_swap_image_count());
 
     gf3d_vgraphics.enable_2d = 1;
+    gf3d_mesh_init(1024);
+    model_init_system(1024);
     gf2d_sprite_manager_init(1024);
-    renderPipe = gf2d_sprite_get_pipeline();
+    renderPipe3D = model_get_pipeline();
+    renderPipe2D = gf2d_sprite_get_pipeline();
 
     gf3d_swapchain_create_depth_image();
-    gf3d_swapchain_setup_frame_buffers(renderPipe);
+    gf3d_swapchain_setup_frame_buffers(renderPipe3D);
+    gf3d_swapchain_setup_frame_buffers(renderPipe2D);
     gf3d_vgraphics_semaphores_create();
+    sj_free(json);
 }
 
 

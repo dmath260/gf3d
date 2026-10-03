@@ -3,3 +3,8 @@ glslangValidator.exe -V sprite.vert -o sprite_vert.spv
 
 glslangValidator.exe -V model.frag -o model_frag.spv
 glslangValidator.exe -V model.vert -o model_vert.spv
+
+glslangValidator.exe -V sky.frag -o sky_frag.spv
+glslangValidator.exe -V sky.vert -o sky_vert.spv
+
+glslangValidator.exe -V high.frag -o high_frag.spv

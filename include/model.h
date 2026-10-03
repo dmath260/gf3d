@@ -1,14 +1,6 @@
 #ifndef __MODEL_H__
 #define __MODEL_H__
 
-#include "simple_json.h"
-
-#include "gfc_types.h"
-#include "gfc_vector.h"
-#include "gfc_matrix.h"
-#include "gfc_text.h"
-
-#include "gf3d_pipeline.h"
 #include "gf3d_mesh.h"
 
 typedef struct
@@ -45,12 +37,28 @@ void model_delete(Model* model);
 Pipeline* model_get_pipeline();
 
 /**
+ * @brief queue up a render for the current draw frame for the sky
+ * @param model the model to render
+ * @param mat the model matrix
+ * @param colorMod the color modifier for the model
+ */
+void model_queue_render_sky(Model* model, GFC_Matrix4 mat, GFC_Color colorMod);
+
+/**
  * @brief queue up a render for the current draw frame
  * @param model the model to render
  * @param mat the model matrix
  * @param colorMod the color modifier for the model
  */
 void model_queue_render(Model* model, GFC_Matrix4 mat, GFC_Color colorMod);
+
+/**
+ * @brief queue up a render for the current draw frame for highlights
+ * @param model the model to render
+ * @param mat the model matrix
+ * @param colorMod the color modifier for the model
+ */
+void model_queue_render_highlight(Model* model, GFC_Matrix4 mat, GFC_Color colorMod);
 
 /**
  * @brief given a model matrix and basic color, build the modelUBO needed to render a model

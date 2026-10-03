@@ -129,11 +129,16 @@
     <ClCompile Include="..\src\model.c" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\config\highlight_pipeline.cfg" />
     <None Include="..\config\model_pipeline.cfg" />
     <None Include="..\config\overlay_pipeline.cfg" />
+    <None Include="..\config\sky_pipeline.cfg" />
     <None Include="..\models\dino.model" />
+    <None Include="..\shaders\high.frag" />
     <None Include="..\shaders\model.frag" />
     <None Include="..\shaders\model.vert" />
+    <None Include="..\shaders\sky.frag" />
+    <None Include="..\shaders\sky.vert" />
     <None Include="..\shaders\sprite.frag" />
     <None Include="..\shaders\sprite.vert" />
   </ItemGroup>

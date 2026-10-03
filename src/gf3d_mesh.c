@@ -12,7 +12,6 @@ typedef struct
 {
     Uint32      meshCount;
     Mesh       *meshList;
-    Pipeline* pipe; /**<the pipeline associated with model/mesh rendering*/
     VkDevice    device;
     VkVertexInputAttributeDescription   attributeDescriptions[MESH_ATTRIBUTE_COUNT];
     VkVertexInputBindingDescription     bindingDescription;
@@ -166,6 +165,7 @@ int gf3d_mesh_primitive_buffer_create(MeshPrimitive* prim)
 
     // Face Buffers
     bufferSize = sizeof(Face) * prim->objData->face_count;
+    prim->faceCount = prim->objData->face_count;
 
     gf3d_buffer_create(bufferSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, &stagingBuffer, &stagingBufferMemory);
     
@@ -182,6 +182,7 @@ int gf3d_mesh_primitive_buffer_create(MeshPrimitive* prim)
 
     // Vertex buffers
     bufferSize = sizeof(Vertex) * prim->objData->face_vert_count;
+    prim->vertexCount = prim->objData->face_vert_count;
 
     gf3d_buffer_create(bufferSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, &stagingBuffer, &stagingBufferMemory);
 
@@ -189,7 +190,7 @@ int gf3d_mesh_primitive_buffer_create(MeshPrimitive* prim)
     memcpy(data, prim->objData->faceVertices, (size_t)bufferSize);
     vkUnmapMemory(mesh_manager.device, stagingBufferMemory);
 
-    gf3d_buffer_create(bufferSize, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, &prim->vertexBuffer, &prim->vertexBufferMemory);
+    gf3d_buffer_create(bufferSize, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, &prim->vertexBuffer, &prim->vertexBufferMemory);
 
     gf3d_buffer_copy(stagingBuffer, prim->vertexBuffer, bufferSize);
 

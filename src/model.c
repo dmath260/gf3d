@@ -20,6 +20,8 @@ typedef struct
 	Model* modelList;
 	Uint32 modelCount;
     Pipeline* pipe;
+    Pipeline* skyPipe;
+    Pipeline* highPipe;
     VkDevice device;
     Texture* defaultTexture;
 }ModelManager;
@@ -41,7 +43,28 @@ void model_init_system(Uint32 modelCount)
     model_manager.modelList = gfc_allocate_array(sizeof(Model), modelCount);
     model_manager.device = gf3d_vgraphics_get_default_logical_device();
     if (!model_manager.modelList) return;
+    gf3d_mesh_init(modelCount);
     model_manager.modelCount = modelCount;
+
+    model_manager.skyPipe = gf3d_pipeline_create_from_config(
+        model_manager.device,
+        "config/sky_pipeline.cfg",
+        gf3d_vgraphics_get_view_extent(),
+        4,
+        gf3d_mesh_get_bind_description(),
+        gf3d_mesh_get_attribute_descriptions(NULL),
+        MESH_ATTRIBUTE_COUNT,
+        sizeof(ModelUBO),
+        VK_INDEX_TYPE_UINT16
+    );
+    if (!model_manager.skyPipe)
+    {
+        slog("Failed to make pipeline for the skybox!");
+        slog_sync();
+        model_close();
+        exit(-1);
+        return;
+    }
 
     model_manager.pipe = gf3d_pipeline_create_from_config(
         model_manager.device,
@@ -57,6 +80,26 @@ void model_init_system(Uint32 modelCount)
     if (!model_manager.pipe)
     {
         slog("Failed to make pipeline for models!");
+        slog_sync();
+        model_close();
+        exit(-1);
+        return;
+    }
+
+    model_manager.highPipe = gf3d_pipeline_create_from_config(
+        model_manager.device,
+        "config/highlight_pipeline.cfg",
+        gf3d_vgraphics_get_view_extent(),
+        modelCount,
+        gf3d_mesh_get_bind_description(),
+        gf3d_mesh_get_attribute_descriptions(NULL),
+        MESH_ATTRIBUTE_COUNT,
+        sizeof(ModelUBO),
+        VK_INDEX_TYPE_UINT16
+    );
+    if (!model_manager.highPipe)
+    {
+        slog("Failed to make pipeline for highlight!");
         slog_sync();
         model_close();
         exit(-1);
@@ -155,7 +198,7 @@ Model* model_get_by_filename(const char* filename)
         if (model_manager.modelList[i]._refCount == 0) continue;
         if (gfc_strlcmp(model_manager.modelList[i].filename, filename) == 0)
         {
-            return model_manager.modelList[i].filename;
+            return &model_manager.modelList[i];
         }
     }
     return NULL;
@@ -207,13 +250,17 @@ Model* model_load(const char* filename)
     }
 
     slog_sync();
-    str2 = sj_object_get_string(json, "texture");
+    str2 = sj_object_get_string(data, "texture");
     if (str2)
     {
         texture = gf3d_texture_load(str2);
         if (!texture) texture = model_manager.defaultTexture;
     }
-    else texture = model_manager.defaultTexture;
+    else
+    {
+        slog("Loading default texture for mode %s", filename);
+        texture = model_manager.defaultTexture;
+    }
 
     model = model_new();
     if (!model)
@@ -230,12 +277,28 @@ Model* model_load(const char* filename)
     return model;
 }
 
+void model_queue_render_sky(Model* model, GFC_Matrix4 mat, GFC_Color colorMod)
+{
+    ModelUBO ubo;
+    if (!model) return;
+    ubo = model_get_ubo(mat, colorMod);
+    gf3d_mesh_queue_render(model->mesh, model_manager.skyPipe, &ubo, model->texture);
+}
+
+void model_queue_render_highlight(Model* model, GFC_Matrix4 mat, GFC_Color colorMod)
+{
+    ModelUBO ubo;
+    if (!model) return;
+    ubo = model_get_ubo(mat, colorMod);
+    gf3d_mesh_queue_render(model->mesh, model_manager.highPipe, &ubo, model->texture);
+}
+
 void model_queue_render(Model* model, GFC_Matrix4 mat, GFC_Color colorMod)
 {
     ModelUBO ubo;
     if (!model) return;
     ubo = model_get_ubo(mat, colorMod);
-    gf3d_mesh_queue_render(model->mesh, model_manager.pipe, (void *)(&ubo), model->texture);
+    gf3d_mesh_queue_render(model->mesh, model_manager.pipe, &ubo, model->texture);
 }
 
 /*eol@eof*/

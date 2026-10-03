@@ -19,13 +19,20 @@ layout(location = 1) in vec3 inNormal;
 layout(location = 2) in vec2 inUV;
 
 layout(location = 0) out vec3 outPosition;
-layout(location = 1) out vec3 outNormal;
+layout(location = 1) out vec4 outNormal;
 layout(location = 2) out vec2 outUV;
 
 void main()
 {
+    mat4 view = ubo.view;
     outUV = inUV;
-    outNormal = inNormal;
-    gl_Position = ubo.proj * ubo.view * ubo.model * vec4(inPosition, 1.0);
+    outNormal = vec4(inNormal,0);
+    view[0][3] = 0;
+    view[1][3] = 0;
+    view[2][3] = 0;
+    view[3][0] = 0;
+    view[3][1] = 0;
+    view[3][2] = 0;
+    gl_Position = ubo.proj * view * ubo.model * vec4(inPosition, 1.0);
     outPosition = inPosition;
 }

@@ -40,14 +40,17 @@
     <Filter Include="Resource Files\Shaders\Models">
       <UniqueIdentifier>{75bed405-b1b4-4ed4-b1ee-ae2209bf6c5c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Resource Files\Config">
-      <UniqueIdentifier>{13a0c5be-c68c-45a5-bb09-2fa2795ac9d8}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\pmd">
       <UniqueIdentifier>{625558da-91a8-4fad-9a96-75b74213b4a3}</UniqueIdentifier>
     </Filter>
     <Filter Include="Resource Files\Models">
       <UniqueIdentifier>{cd2a99e5-6dc4-4edc-bcd1-5e5917ff4a3b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Shaders\Sky">
+      <UniqueIdentifier>{87a446b9-e21b-4a8c-b1bd-f6622057b5ae}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Pipelines">
+      <UniqueIdentifier>{13a0c5be-c68c-45a5-bb09-2fa2795ac9d8}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -386,13 +389,28 @@
       <Filter>Resource Files\Shaders\Models</Filter>
     </None>
     <None Include="..\config\model_pipeline.cfg">
-      <Filter>Resource Files\Config</Filter>
+      <Filter>Resource Files\Pipelines</Filter>
     </None>
     <None Include="..\config\overlay_pipeline.cfg">
-      <Filter>Resource Files\Config</Filter>
+      <Filter>Resource Files\Pipelines</Filter>
     </None>
     <None Include="..\models\dino.model">
       <Filter>Resource Files\Models</Filter>
+    </None>
+    <None Include="..\config\sky_pipeline.cfg">
+      <Filter>Resource Files\Pipelines</Filter>
+    </None>
+    <None Include="..\shaders\sky.frag">
+      <Filter>Resource Files\Shaders\Sky</Filter>
+    </None>
+    <None Include="..\shaders\sky.vert">
+      <Filter>Resource Files\Shaders\Sky</Filter>
+    </None>
+    <None Include="..\config\highlight_pipeline.cfg">
+      <Filter>Resource Files\Pipelines</Filter>
+    </None>
+    <None Include="..\shaders\high.frag">
+      <Filter>Resource Files\Shaders</Filter>
     </None>
   </ItemGroup>
 </Project>

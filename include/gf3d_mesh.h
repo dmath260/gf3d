@@ -79,21 +79,6 @@ Mesh *gf3d_mesh_new();
 Mesh *gf3d_mesh_load_obj(const char *filename);
 
 /**
- * @brief make an exact, but separate copy of the input mesh
- * @param in the mesh to duplicate
- * @return NULL on error, or a copy of in
- */
-Mesh *gf3d_mesh_copy(Mesh *in);
-
-/**
- * @brief move all of the vertices of the mesh by offset at the buffer level
- * @param in the mesh to move
- * @param offset how much to move it
- * @param rotation apply this rotation to the vertices and normals
- */
-void gf3d_mesh_move_vertices(Mesh *in, GFC_Vector3D offset,GFC_Vector3D rotation);
-
-/**
  * @brief allocate a zero initialized mesh primitive
  * @return NULL on error or the primitive
  */

@@ -41,7 +41,6 @@ void exitGame()
 int main(int argc,char *argv[])
 {
     //local variables
-    Sprite *bg;
     Model* model, *sky;
     GFC_Vector3D offset = {0, -20, 10};
     GFC_Matrix4 mat, mat2, *view;
@@ -62,7 +61,6 @@ int main(int argc,char *argv[])
     //game init
     srand(SDL_GetTicks());
     slog_sync();
-    bg = gf2d_sprite_load_image("images/bg_free.png");
     gf2d_mouse_load("actors/mouse.actor");
     model = model_load("models/dino.model");
     sky = model_load("models/sky.model");
@@ -76,7 +74,20 @@ int main(int argc,char *argv[])
         gf2d_mouse_update();
         gf2d_font_update();
 
-        //camera updates
+        // thinks
+
+        // entity updates
+
+        // camera updates
+        /**
+        // temp camera code
+        if (gfc_input_command_down("panup")) offset.z++;
+        if (gfc_input_command_down("pandown")) offset.z--;
+        if (gfc_input_command_down("panleft")) offset.x++;
+        if (gfc_input_command_down("panright")) offset.x--;
+        if (gfc_input_command_down("zoomin")) offset.y++;
+        if (gfc_input_command_down("zoomout")) offset.y--;
+        */
         gfc_vector3d_rotate_about_z(&offset, angle);
         gfc_matrix4_view(
             *view,
@@ -91,8 +102,7 @@ int main(int argc,char *argv[])
         model_queue_render(model, mat, GFC_COLOR_WHITE);
         //model_queue_render_highlight(model, mat2, GFC_COLOR_BLUE);
 
-        //2D draws
-        //gf2d_sprite_draw_image(bg,gfc_vector2d(0,0));
+        // 2D draws
         gf2d_font_draw_line_tag("ALT+F4 to exit",FT_H1,GFC_COLOR_WHITE, gfc_vector2d(10,10));
         gf2d_mouse_draw();
 

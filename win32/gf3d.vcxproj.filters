@@ -52,6 +52,9 @@
     <Filter Include="Resource Files\Pipelines">
       <UniqueIdentifier>{13a0c5be-c68c-45a5-bb09-2fa2795ac9d8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\pmd">
+      <UniqueIdentifier>{f7d86309-f173-4c32-bd44-e0b6ac5e3c50}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\gfc\simple_logger\include\simple_logger.h">
@@ -214,7 +217,13 @@
       <Filter>Header Files\sjson</Filter>
     </ClInclude>
     <ClInclude Include="..\include\model.h">
-      <Filter>Header Files\gf3d</Filter>
+      <Filter>Header Files\pmd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\entity.h">
+      <Filter>Header Files\pmd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\player.h">
+      <Filter>Header Files\pmd</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -372,6 +381,12 @@
       <Filter>Source Files\gf3d</Filter>
     </ClCompile>
     <ClCompile Include="..\src\model.c">
+      <Filter>Source Files\pmd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\entity.c">
+      <Filter>Source Files\pmd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\player.c">
       <Filter>Source Files\pmd</Filter>
     </ClCompile>
   </ItemGroup>

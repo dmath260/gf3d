@@ -22,6 +22,8 @@
 #include "gf3d_mesh.h"
 
 #include "model.h"
+#include "entity.h"
+#include "player.h"
 
 extern int __DEBUG;
 
@@ -41,7 +43,7 @@ void exitGame()
 int main(int argc,char *argv[])
 {
     //local variables
-    Model* model, *sky;
+    Model* sky;
     GFC_Vector3D offset = {0, -20, 10};
     GFC_Matrix4 mat, mat2, *view;
     float angle = 0.01;
@@ -57,13 +59,14 @@ int main(int argc,char *argv[])
     gf3d_vgraphics_init("config/setup.cfg");
     gf2d_font_init("config/font.cfg");
     gf2d_actor_init(1000);
+    entity_init(1000);
     
     //game init
     srand(SDL_GetTicks());
     slog_sync();
     gf2d_mouse_load("actors/mouse.actor");
-    model = model_load("models/dino.model");
     sky = model_load("models/sky.model");
+    player_spawn(gfc_vector3d(0,0,0));
     gfc_matrix4_identity(mat);
     gfc_matrix4_identity(mat2);
     view = gf3d_vgraphics_get_view_matrix();
@@ -74,20 +77,7 @@ int main(int argc,char *argv[])
         gf2d_mouse_update();
         gf2d_font_update();
 
-        // thinks
-
-        // entity updates
-
         // camera updates
-        /**
-        // temp camera code
-        if (gfc_input_command_down("panup")) offset.z++;
-        if (gfc_input_command_down("pandown")) offset.z--;
-        if (gfc_input_command_down("panleft")) offset.x++;
-        if (gfc_input_command_down("panright")) offset.x--;
-        if (gfc_input_command_down("zoomin")) offset.y++;
-        if (gfc_input_command_down("zoomout")) offset.y--;
-        */
         gfc_vector3d_rotate_about_z(&offset, angle);
         gfc_matrix4_view(
             *view,
@@ -95,11 +85,17 @@ int main(int argc,char *argv[])
             gfc_vector3d(0, 0, 0),
             gfc_vector3d(0, 0, 1)
         );
-        gf3d_vgraphics_render_start();
+
+        // thinks
+        entity_system_think();
+
+        // entity updates
+        entity_system_update();
 
         // 3D draws
+        gf3d_vgraphics_render_start();
         model_queue_render_sky(sky, mat, GFC_COLOR_WHITE);
-        model_queue_render(model, mat, GFC_COLOR_WHITE);
+        entity_system_draw();
         //model_queue_render_highlight(model, mat2, GFC_COLOR_BLUE);
 
         // 2D draws

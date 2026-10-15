@@ -44,9 +44,7 @@ int main(int argc,char *argv[])
 {
     //local variables
     Model* sky;
-    GFC_Vector3D offset = {0, -20, 10};
-    GFC_Matrix4 mat, mat2, *view;
-    float angle = 0.01;
+    GFC_Matrix4 mat;
     //initialization    
     parse_arguments(argc,argv);
     init_logger("gf3d.log",0);
@@ -68,8 +66,7 @@ int main(int argc,char *argv[])
     sky = model_load("models/sky.model");
     player_spawn(gfc_vector3d(0,0,0));
     gfc_matrix4_identity(mat);
-    gfc_matrix4_identity(mat2);
-    view = gf3d_vgraphics_get_view_matrix();
+
     // main game loop    
     while(!_done)
     {
@@ -78,13 +75,6 @@ int main(int argc,char *argv[])
         gf2d_font_update();
 
         // camera updates
-        gfc_vector3d_rotate_about_z(&offset, angle);
-        gfc_matrix4_view(
-            *view,
-            offset,
-            gfc_vector3d(0, 0, 0),
-            gfc_vector3d(0, 0, 1)
-        );
 
         // thinks
         entity_system_think();
@@ -96,7 +86,6 @@ int main(int argc,char *argv[])
         gf3d_vgraphics_render_start();
         model_queue_render_sky(sky, mat, GFC_COLOR_WHITE);
         entity_system_draw();
-        //model_queue_render_highlight(model, mat2, GFC_COLOR_BLUE);
 
         // 2D draws
         gf2d_font_draw_line_tag("ALT+F4 to exit",FT_H1,GFC_COLOR_WHITE, gfc_vector2d(10,10));

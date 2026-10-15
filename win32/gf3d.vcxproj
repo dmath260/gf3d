@@ -134,6 +134,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\config\highlight_pipeline.cfg" />
+    <None Include="..\config\input.cfg" />
     <None Include="..\config\model_pipeline.cfg" />
     <None Include="..\config\overlay_pipeline.cfg" />
     <None Include="..\config\sky_pipeline.cfg" />

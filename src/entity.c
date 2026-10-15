@@ -34,7 +34,7 @@ void entity_init(Uint32 maxEnts)
 Entity* entity_new()
 {
 	int i;
-	if (!entity_manager.entityList) return;
+	if (!entity_manager.entityList) return NULL;
 	for (i = 0; i < entity_manager.maxEnts; i++)
 	{
 		if (entity_manager.entityList[i]._inuse) continue;
@@ -52,6 +52,7 @@ Entity* entity_new()
 void entity_free(Entity* ent)
 {
 	if (!ent || !ent->_inuse) return;
+	if (ent->free) ent->free(ent);
 	model_free(ent->model);
 	memset(ent, 0, sizeof(Entity));
 }
@@ -79,11 +80,19 @@ void entity_system_think()
 void entity_update(Entity* self)
 {
 	if (!self || !self->_inuse) return;
+	gfc_vector3d_add(self->position, self->position, self->velocity);
+
+	// Dampening
+	if (gfc_vector3d_magnitude_squared(self->velocity) > 0.01)
+	{
+		gfc_vector3d_scale(self->velocity, self->velocity, 0.8);
+	}
+	else gfc_vector3d_clear(self->velocity);
+
 	if (self->update)
 	{
 		if (self->update(self) == 1) return;
 	}
-	gfc_vector3d_add(self->position, self->position, self->velocity);
 }
 
 void entity_system_update()

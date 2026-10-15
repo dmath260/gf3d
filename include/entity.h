@@ -17,6 +17,9 @@ typedef struct Entity_S
 	int (*think)(struct Entity_S *self);
 	int (*update)(struct Entity_S* self);
 	int (*draw)(struct Entity_S* self);
+
+	void (*free)(struct Entity_S* self); // cleans up custom data
+	void* data; // used for custom entity data. If set, you must specify a FREE function.
 }Entity;
 
 /**

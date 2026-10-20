@@ -73,6 +73,7 @@
     <ClInclude Include="..\include\gf3d_validation.h" />
     <ClInclude Include="..\include\gf3d_vgraphics.h" />
     <ClInclude Include="..\include\gf3d_vqueues.h" />
+    <ClInclude Include="..\include\level.h" />
     <ClInclude Include="..\include\model.h" />
     <ClInclude Include="..\include\player.h" />
   </ItemGroup>
@@ -129,15 +130,18 @@
     <ClCompile Include="..\src\gf3d_validation.c" />
     <ClCompile Include="..\src\gf3d_vgraphics.c" />
     <ClCompile Include="..\src\gf3d_vqueues.c" />
+    <ClCompile Include="..\src\level.c" />
     <ClCompile Include="..\src\model.c" />
     <ClCompile Include="..\src\player.c" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\config\audio.cfg" />
     <None Include="..\config\highlight_pipeline.cfg" />
     <None Include="..\config\input.cfg" />
     <None Include="..\config\model_pipeline.cfg" />
     <None Include="..\config\overlay_pipeline.cfg" />
     <None Include="..\config\sky_pipeline.cfg" />
+    <None Include="..\levels\testlevel.json" />
     <None Include="..\models\dino.model" />
     <None Include="..\shaders\high.frag" />
     <None Include="..\shaders\model.frag" />

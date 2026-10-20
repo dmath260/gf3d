@@ -1,0 +1,11 @@
+{
+  "level": {
+    "sky": "models/sky.model",
+    "_terrain": "models/terrain.model",
+    "_music": "sounds/music/bgmusic2.ogg",
+    "bounds": {
+      "m": [ -250, -250, -20 ],
+      "s": [ 500, 500, 100 ]
+    }
+  }
+}

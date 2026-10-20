@@ -24,6 +24,7 @@
 #include "model.h"
 #include "entity.h"
 #include "player.h"
+#include "level.h"
 
 extern int __DEBUG;
 
@@ -43,8 +44,7 @@ void exitGame()
 int main(int argc,char *argv[])
 {
     //local variables
-    Model* sky;
-    GFC_Matrix4 mat;
+    Level* level;
     //initialization    
     parse_arguments(argc,argv);
     init_logger("gf3d.log",0);
@@ -55,6 +55,7 @@ int main(int argc,char *argv[])
     gfc_action_init(1024);
     //gf3d init
     gf3d_vgraphics_init("config/setup.cfg");
+    gfc_sound_init_config("config/audio.cfg");
     gf2d_font_init("config/font.cfg");
     gf2d_actor_init(1000);
     entity_init(1000);
@@ -63,9 +64,8 @@ int main(int argc,char *argv[])
     srand(SDL_GetTicks());
     slog_sync();
     gf2d_mouse_load("actors/mouse.actor");
-    sky = model_load("models/sky.model");
     player_spawn(gfc_vector3d(0,0,0));
-    gfc_matrix4_identity(mat);
+    level = level_load("levels/testlevel.json");
 
     // main game loop    
     while(!_done)
@@ -82,9 +82,11 @@ int main(int argc,char *argv[])
         // entity updates
         entity_system_update();
 
-        // 3D draws
+        // start draw
         gf3d_vgraphics_render_start();
-        model_queue_render_sky(sky, mat, GFC_COLOR_WHITE);
+
+        // 3D draws
+        level_draw(level);
         entity_system_draw();
 
         // 2D draws

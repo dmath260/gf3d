@@ -58,6 +58,9 @@
     <Filter Include="Resource Files\Configs">
       <UniqueIdentifier>{752e1e3b-3331-4b26-8bf5-4857d5a27c42}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files\Level">
+      <UniqueIdentifier>{6910ff77-ec9b-49ba-bc72-3a6bf004fd3d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\gfc\simple_logger\include\simple_logger.h">
@@ -228,6 +231,9 @@
     <ClInclude Include="..\include\player.h">
       <Filter>Header Files\pmd</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\level.h">
+      <Filter>Header Files\pmd</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\gfc\simple_logger\src\simple_logger.c">
@@ -392,6 +398,9 @@
     <ClCompile Include="..\src\player.c">
       <Filter>Source Files\pmd</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\level.c">
+      <Filter>Source Files\pmd</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\shaders\sprite.frag">
@@ -431,6 +440,12 @@
       <Filter>Resource Files\Shaders</Filter>
     </None>
     <None Include="..\config\input.cfg">
+      <Filter>Resource Files\Configs</Filter>
+    </None>
+    <None Include="..\levels\testlevel.json">
+      <Filter>Resource Files\Level</Filter>
+    </None>
+    <None Include="..\config\audio.cfg">
       <Filter>Resource Files\Configs</Filter>
     </None>
   </ItemGroup>

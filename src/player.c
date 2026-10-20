@@ -5,6 +5,7 @@
 #include "gf3d_vgraphics.h"
 
 #include "player.h"
+#include "level.h"
 
 typedef struct
 {
@@ -59,6 +60,9 @@ void player_free(Entity* self)
 
 int player_think(Entity* self)
 {
+	GFC_Edge3D edge;
+	GFC_Vector3D floor;
+	GFC_Vector3D offset;
 	PlayerEntityData* data;
 	GFC_Vector3D move = {0};
 	if (!self || !self->data) return 0;
@@ -98,6 +102,16 @@ int player_think(Entity* self)
 	if (gfc_input_command_down("item_right"))
 	{
 		move.x = 1;
+	}
+
+	offset = gfc_vector3d(0, 0, 100);
+	gfc_vector3d_add(edge.a, self->position, offset);
+	offset = gfc_vector3d(0, 0, -100);
+	gfc_vector3d_add(edge.b, self->position, offset);
+	if (level_line_test(level_get_the(), edge, &floor))
+	{
+		slog("here");
+		self->position.z = floor.z + 7;
 	}
 
 	if (move.x || move.y)

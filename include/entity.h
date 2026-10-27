@@ -11,6 +11,9 @@ typedef struct Entity_S
 	GFC_Vector3D rotation;
 	GFC_Vector3D scale;
 	GFC_Matrix4 mat;
+
+	GFC_Box bounds;
+
 	GFC_Vector3D velocity;
 	GFC_Color colorMod;
 
@@ -49,6 +52,11 @@ void entity_system_think();
 * @brief run updates on all active entities
 */
 void entity_system_update();
+
+/**
+* @brief check if two entities collide
+*/
+int entity_collision_other(Entity* self, Entity* other);
 
 /**
 * @brief queue renders on all active entities

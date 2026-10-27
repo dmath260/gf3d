@@ -25,6 +25,7 @@
 #include "entity.h"
 #include "player.h"
 #include "level.h"
+#include "item.h"
 
 extern int __DEBUG;
 
@@ -58,6 +59,7 @@ int main(int argc,char *argv[])
     gfc_sound_init_config("config/audio.cfg");
     gf2d_font_init("config/font.cfg");
     gf2d_actor_init(1000);
+    gfc_config_def_load("defs/item.json");
     entity_init(1000);
     
     //game init
@@ -65,6 +67,7 @@ int main(int argc,char *argv[])
     slog_sync();
     gf2d_mouse_load("actors/mouse.actor");
     player_spawn(gfc_vector3d(0,0,0));
+    item_spawn("cube", gfc_vector3d(50,50,0));
     level = level_load("levels/testlevel.json");
 
     // main game loop    

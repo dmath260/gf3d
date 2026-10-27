@@ -106,6 +106,17 @@ void entity_system_update()
 	}
 }
 
+int entity_collision_other(Entity* self, Entity* other)
+{
+	GFC_Box a, b;
+	if (!self || !other) return;
+	a = self->bounds;
+	b = other->bounds;
+	gfc_vector3d_add(a, a, self->position);
+	gfc_vector3d_add(b, b, other->position);
+	return gfc_box_overlap(a, b);
+}
+
 void entity_draw(Entity* ent)
 {
 	if (!ent || !ent->_inuse) return;

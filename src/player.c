@@ -7,6 +7,8 @@
 #include "player.h"
 #include "level.h"
 
+static Entity* thePlayer = NULL;
+
 typedef struct
 {
 	float cameraFollowDistance;
@@ -25,10 +27,16 @@ int player_think(Entity* self);
 int player_update(Entity* self);
 void player_free(Entity* self);
 
+Entity* player_get_the()
+{
+	return thePlayer;
+}
+
 Entity* player_spawn(GFC_Vector3D position)
 {
 	PlayerEntityData* data;
 	Entity* self;
+	if (thePlayer) return thePlayer;
 	self = entity_new();
 	if (!self) return NULL;
 	self->model = model_load("models/dino.model");
@@ -36,6 +44,7 @@ Entity* player_spawn(GFC_Vector3D position)
 	self->think = player_think;
 	self->update = player_update;
 	self->free = player_free;
+	self->bounds = gfc_box(-10, -10, -10, 20, 20, 20);
 	data = gfc_allocate_array(sizeof(PlayerEntityData), 1);
 	if (data)
 	{
@@ -44,6 +53,7 @@ Entity* player_spawn(GFC_Vector3D position)
 		data->cameraRotation.y = -GFC_PI / 6;
 	}
 	self->data = data;
+	thePlayer = self;
 
 	return self;
 }
@@ -55,12 +65,13 @@ void player_free(Entity* self)
 	data = (PlayerEntityData*)self->data;
 	// clean up any borrowed resources
 	free(data);
+	thePlayer = NULL;
 	self->data = NULL;
 }
 
 int player_think(Entity* self)
 {
-	GFC_Edge3D edge;
+	GFC_Edge3D edge = {0};
 	GFC_Vector3D floor;
 	GFC_Vector3D offset;
 	PlayerEntityData* data;
@@ -104,6 +115,9 @@ int player_think(Entity* self)
 		move.x = 1;
 	}
 
+	/**
+	gfc_vector3d_copy(edge.a, self->position);
+	gfc_vector3d_copy(edge.b, self->position);
 	offset = gfc_vector3d(0, 0, 100);
 	gfc_vector3d_add(edge.a, self->position, offset);
 	offset = gfc_vector3d(0, 0, -100);
@@ -113,6 +127,7 @@ int player_think(Entity* self)
 		slog("here");
 		self->position.z = floor.z + 7;
 	}
+	*/
 
 	if (move.x || move.y)
 	{

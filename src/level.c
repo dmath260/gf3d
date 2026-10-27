@@ -139,5 +139,5 @@ void level_draw(Level* level)
 	if (!level) return;
 	gfc_matrix4_identity(id);
 	model_queue_render_sky(level->sky, id, GFC_COLOR_WHITE);
-	model_queue_render_sky(level->terrain, level->terrainMatrix, GFC_COLOR_WHITE);
+	model_queue_render(level->terrain, level->terrainMatrix, GFC_COLOR_WHITE);
 }

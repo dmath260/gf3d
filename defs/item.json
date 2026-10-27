@@ -1,0 +1,21 @@
+{
+  "items": [
+    {
+      "name": "cube",
+      "model": "models/testitem.model",
+      "bounds": {
+        "m": [
+          -10,
+          -10,
+          -10
+        ],
+        "s": [
+          20,
+          20,
+          20
+        ]
+      },
+      "description": "t h e   C U B E"
+    }
+  ]
+}

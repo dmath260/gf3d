@@ -61,6 +61,9 @@
     <Filter Include="Resource Files\Level">
       <UniqueIdentifier>{6910ff77-ec9b-49ba-bc72-3a6bf004fd3d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files\Defs">
+      <UniqueIdentifier>{103dbd34-cdb2-42a8-b877-4fab693bd211}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\gfc\simple_logger\include\simple_logger.h">
@@ -234,6 +237,9 @@
     <ClInclude Include="..\include\level.h">
       <Filter>Header Files\pmd</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\item.h">
+      <Filter>Header Files\pmd</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\gfc\simple_logger\src\simple_logger.c">
@@ -401,6 +407,9 @@
     <ClCompile Include="..\src\level.c">
       <Filter>Source Files\pmd</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\item.c">
+      <Filter>Source Files\pmd</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\shaders\sprite.frag">
@@ -447,6 +456,9 @@
     </None>
     <None Include="..\config\audio.cfg">
       <Filter>Resource Files\Configs</Filter>
+    </None>
+    <None Include="..\defs\item.json">
+      <Filter>Resource Files\Defs</Filter>
     </None>
   </ItemGroup>
 </Project>

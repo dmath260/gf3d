@@ -20,14 +20,7 @@ layout(location = 0) out vec4 outColor;
 
 void main()
 {
-    vec3 ambientLightColor = vec3(0.5,0.5,0.5);
-    vec3 globalLightSource = vec3(0,0,100);
-    vec3 lightDir = globalLightSource - inPosition;
-    normalize(lightDir);
-    float brightness = dot(lightDir, inNormal) * .5;
-    vec4 texColor = texture(texSampler, inUV);
+    outColor = texture(texSampler, inUV);
     //DO SOME MATH FOR NORMALS
-    outColor = vec4(texColor.xyz * ambientLightColor, texColor.w);
-    outColor.xyz *= brightness * texColor.xyz;
     outColor *= ubo.color;
 }

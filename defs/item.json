@@ -5,14 +5,14 @@
       "model": "models/testitem.model",
       "bounds": {
         "m": [
-          -10,
-          -10,
-          -10
+          -0.5,
+          -0.5,
+          -0.5
         ],
         "s": [
-          20,
-          20,
-          20
+          1,
+          1,
+          1
         ]
       },
       "description": "t h e   C U B E"

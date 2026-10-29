@@ -26,6 +26,7 @@
 #include "player.h"
 #include "level.h"
 #include "item.h"
+#include "draw_3d.h"
 
 extern int __DEBUG;
 
@@ -56,6 +57,7 @@ int main(int argc,char *argv[])
     gfc_action_init(1024);
     //gf3d init
     gf3d_vgraphics_init("config/setup.cfg");
+    draw_3d_init();
     gfc_sound_init_config("config/audio.cfg");
     gf2d_font_init("config/font.cfg");
     gf2d_actor_init(1000);

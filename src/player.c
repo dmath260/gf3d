@@ -44,7 +44,7 @@ Entity* player_spawn(GFC_Vector3D position)
 	self->think = player_think;
 	self->update = player_update;
 	self->free = player_free;
-	self->bounds = gfc_box(-10, -10, -10, 20, 20, 20);
+	self->bounds = gfc_box(-5, -5, -5, 10, 10, 10);
 	data = gfc_allocate_array(sizeof(PlayerEntityData), 1);
 	if (data)
 	{
@@ -124,7 +124,6 @@ int player_think(Entity* self)
 	gfc_vector3d_add(edge.b, self->position, offset);
 	if (level_line_test(level_get_the(), edge, &floor))
 	{
-		slog("here");
 		self->position.z = floor.z + 7;
 	}
 	*/

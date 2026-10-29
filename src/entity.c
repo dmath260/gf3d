@@ -1,6 +1,8 @@
 #include "simple_logger.h"
 
 #include "entity.h"
+#include "level.h"
+#include "draw_3d.h"
 
 typedef struct
 {
@@ -80,7 +82,10 @@ void entity_system_think()
 void entity_update(Entity* self)
 {
 	if (!self || !self->_inuse) return;
-	gfc_vector3d_add(self->position, self->position, self->velocity);
+	if (!entity_move_check(self, self->velocity))
+	{
+		gfc_vector3d_add(self->position, self->position, self->velocity);
+	}
 
 	// Dampening
 	if (gfc_vector3d_magnitude_squared(self->velocity) > 0.01)
@@ -117,8 +122,19 @@ int entity_collision_other(Entity* self, Entity* other)
 	return gfc_box_overlap(a, b);
 }
 
+int entity_move_check(Entity* self, GFC_Vector3D offset)
+{
+	GFC_Box aabb;
+	if (!self) return 0;
+	aabb = self->bounds;
+	gfc_vector3d_add(aabb, self->bounds, self->position);
+	gfc_vector3d_add(aabb, aabb, offset);
+	return level_bounds_check(level_get_the(), aabb);
+}
+
 void entity_draw(Entity* ent)
 {
+	GFC_Box aabb;
 	if (!ent || !ent->_inuse) return;
 	if (ent->draw)
 	{
@@ -126,6 +142,15 @@ void entity_draw(Entity* ent)
 	}
 	gfc_matrix4_from_vectors(ent->mat, ent->position, ent->rotation, ent->scale);
 	model_queue_render(ent->model, ent->mat, ent->colorMod);
+	aabb = ent->bounds;
+	aabb.x *= ent->scale.x;
+	aabb.y *= ent->scale.y;
+	aabb.z *= ent->scale.z;
+	aabb.w *= ent->scale.x;
+	aabb.h *= ent->scale.y;
+	aabb.d *= ent->scale.z;
+	gfc_vector3d_add(aabb,aabb,ent->position);
+	draw_3d_cube(aabb, GFC_COLOR_GREEN);
 }
 
 void entity_system_draw()

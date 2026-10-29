@@ -59,6 +59,11 @@ void entity_system_update();
 int entity_collision_other(Entity* self, Entity* other);
 
 /**
+* @brief check if an entity is violating level bounds
+*/
+int entity_move_check(Entity* self, GFC_Vector3D offset);
+
+/**
 * @brief queue renders on all active entities
 */
 void entity_system_draw();

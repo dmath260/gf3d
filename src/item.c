@@ -40,5 +40,6 @@ Entity* item_spawn(const char* itemName, GFC_Vector3D position)
 	self->position = position;
 	self->bounds = gfc_box_from_config(sj_object_get_value(itemDef, "bounds"));
 	self->think = item_think;
+	self->scale = gfc_vector3d(2, 2, 2);
 	return self;
 }

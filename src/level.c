@@ -29,12 +29,11 @@ Uint8 level_line_test(Level* level, GFC_Edge3D edge, GFC_Vector3D *contact)
 			slog("Primitive or its data is NULL");
 			continue;
 		}
-		slog("Terrain has %i faces", prim->objData->face_count);
 		for (j = 0; j < prim->objData->face_count; j++)
 		{
-			t.a = prim->objData->faceVertices[prim->objData->outFace->verts[0]].vertex;
-			t.b = prim->objData->faceVertices[prim->objData->outFace->verts[1]].vertex;
-			t.c = prim->objData->faceVertices[prim->objData->outFace->verts[2]].vertex;
+			t.a = prim->objData->faceVertices[prim->objData->outFace[j].verts[0]].vertex;
+			t.b = prim->objData->faceVertices[prim->objData->outFace[j].verts[1]].vertex;
+			t.c = prim->objData->faceVertices[prim->objData->outFace[j].verts[2]].vertex;
 			if (gfc_triangle_edge_test(edge, t, &out))
 			{
 				if (contact) *contact = out;
@@ -43,7 +42,18 @@ Uint8 level_line_test(Level* level, GFC_Edge3D edge, GFC_Vector3D *contact)
 		}
 	}
 
-	slog("NO DICE");
+	return 0;
+}
+
+Uint8 level_bounds_check(Level* level, GFC_Box aabb)
+{
+	if (!level) return 0;
+
+	if (
+		aabb.x < level->bounds.x || aabb.x + aabb.w > level->bounds.x + level->bounds.w ||
+		aabb.y < level->bounds.y || aabb.y + aabb.h > level->bounds.y + level->bounds.h ||
+		aabb.z < level->bounds.z || aabb.z + aabb.d > level->bounds.z + level->bounds.d
+	) return 1;
 	return 0;
 }
 

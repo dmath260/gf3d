@@ -466,5 +466,23 @@
     <None Include="..\defs\item.json">
       <Filter>Resource Files\Defs</Filter>
     </None>
+    <None Include="..\models\0258\0258.model">
+      <Filter>Resource Files\Models</Filter>
+    </None>
+    <None Include="..\models\sky.model">
+      <Filter>Resource Files\Models</Filter>
+    </None>
+    <None Include="..\models\primitives\cylinder.model">
+      <Filter>Resource Files\Models</Filter>
+    </None>
+    <None Include="..\models\primitives\sphere.model">
+      <Filter>Resource Files\Models</Filter>
+    </None>
+    <None Include="..\models\primitives\cube.model">
+      <Filter>Resource Files\Models</Filter>
+    </None>
+    <None Include="..\models\testitem.model">
+      <Filter>Resource Files\Models</Filter>
+    </None>
   </ItemGroup>
 </Project>

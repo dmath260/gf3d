@@ -21,6 +21,7 @@ static MeshManager mesh_manager = {0};
 
 void gf3d_mesh_close();
 void gf3d_mesh_primative_free(MeshPrimitive* prim);
+int gf3d_mesh_primitive_buffer_create(MeshPrimitive* prim);
 
 void gf3d_mesh_init(Uint32 mesh_max)
 {
@@ -137,6 +138,10 @@ void gf3d_mesh_primative_free(MeshPrimitive* prim)
     {
         gf3d_obj_free(prim->objData);
     }
+    if (prim->texture)
+    {
+        gf3d_texture_free(prim->texture);
+    }
     free(prim);
 }
 
@@ -204,6 +209,9 @@ Mesh* gf3d_mesh_load_obj(const char* filename)
 {
     Mesh *mesh;
     MeshPrimitive *prim;
+    ObjData* rawObj;
+    Uint32 mat, i, face, matchedFaces, faceIdx, vertIdx;
+    Uint32 vertexIndex, normalIndex, texelIndex;
     if (!filename) return NULL;
     mesh = gf3d_mesh_get_by_filename(filename);
     if (mesh)
@@ -217,28 +225,72 @@ Mesh* gf3d_mesh_load_obj(const char* filename)
         slog("failed to allocate a new mesh for %s", filename);
         return NULL;
     }
-    prim = gf3d_mesh_primitive_new();
-    if (!prim)
-    {
-        slog("Failed to get new primitive for mesh for %s", filename);
-        return 0;
-    }
-
-    gfc_list_append(mesh->primitives, prim);
-    prim->objData = gf3d_obj_load_from_file(filename);
-    if (!prim->objData)
-    {
+    rawObj = gf3d_obj_load_from_file(filename);
+    if (!rawObj) {
         slog("gf3d_obj_load_from_file: failed to load object data for model");
         gf3d_mesh_delete(mesh);
         return NULL;
     }
-    if (!gf3d_mesh_primitive_buffer_create(prim))
+
+    for (mat = 0; mat < rawObj->material_count; mat++)
     {
-        slog("failed to build memory buffers for mesh %s", filename);
-        gf3d_mesh_delete(mesh);
-        return NULL;
+        matchedFaces = 0;
+        for (i = 0; i < rawObj->face_count; i++) {
+            if (rawObj->faceMaterialIndices[i] == mat) matchedFaces++;
+        }
+        if (matchedFaces == 0) continue;
+
+        prim = gf3d_mesh_primitive_new();
+        if (!prim)
+        {
+            slog("Failed to get new primitive for mesh for %s", filename);
+            continue;
+        }
+
+        prim->objData = (ObjData*)gfc_allocate_array(sizeof(ObjData), 1);
+        prim->objData->face_count = matchedFaces;
+        prim->objData->face_vert_count = matchedFaces * 3;
+
+        prim->objData->outFace = (Face*)gfc_allocate_array(sizeof(Face), matchedFaces);
+        prim->objData->faceVertices = (Vertex*)gfc_allocate_array(sizeof(Vertex), prim->objData->face_vert_count);
+
+        faceIdx = 0;
+        vertIdx = 0;
+
+        for (i = 0; i < rawObj->face_count; i++)
+        {
+            if (rawObj->faceMaterialIndices[i] != mat) continue;
+            for (face = 0; face < 3; face++, vertIdx++)
+            {
+                vertexIndex = rawObj->faceVerts[i].verts[face];
+                gfc_vector3d_copy(prim->objData->faceVertices[vertIdx].vertex, rawObj->vertices[vertexIndex]);
+
+                if (rawObj->faceNormals) {
+                    normalIndex = rawObj->faceNormals[i].verts[face];
+                    gfc_vector3d_copy(prim->objData->faceVertices[vertIdx].normal, rawObj->normals[normalIndex]);
+                }
+                if (rawObj->faceTexels) {
+                    texelIndex = rawObj->faceTexels[i].verts[face];
+                    gfc_vector2d_copy(prim->objData->faceVertices[vertIdx].texel, rawObj->texels[texelIndex]);
+                }
+                prim->objData->outFace[faceIdx].verts[face] = vertIdx;
+            }
+            faceIdx++;
+        }
+
+        prim->faceCount = prim->objData->face_count;
+        prim->vertexCount = prim->objData->face_vert_count;
+        gfc_list_append(mesh->primitives, prim);
+        if (!gf3d_mesh_primitive_buffer_create(prim))
+        {
+            slog("failed to build memory buffers for material group %i", mat);
+            gf3d_mesh_delete(mesh);
+            gf3d_obj_free(rawObj);
+            return NULL;
+        }
     }
-    
+
+    gf3d_obj_free(rawObj);
     gfc_line_cpy(mesh->filename, filename);
     return mesh;
 }
@@ -285,11 +337,11 @@ VkVertexInputBindingDescription* gf3d_mesh_get_bind_description()
     return &mesh_manager.bindingDescription;
 }
 
-void gf3d_mesh_queue_render(Mesh* mesh, Pipeline* pipe, void* uboData, Texture* texture)
+void gf3d_mesh_queue_render(Mesh* mesh, Pipeline* pipe, void* uboData)
 {
     int i, c;
     MeshPrimitive* prim;
-    if (!mesh || !texture || !uboData || !pipe) return;
+    if (!mesh || !uboData || !pipe) return;
     c = gfc_list_count(mesh->primitives);
     for (i = 0; i < c; i++)
     {
@@ -301,7 +353,7 @@ void gf3d_mesh_queue_render(Mesh* mesh, Pipeline* pipe, void* uboData, Texture* 
             prim->vertexCount,
             prim->faceBuffer,
             uboData,
-            texture
+            prim->texture
         );
     }
 }

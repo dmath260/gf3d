@@ -3,6 +3,7 @@
 #include "simple_logger.h"
 
 #include "gfc_pak.h"
+#include "gfc_text.h"
 
 #include "gf3d_obj_load.h"
 
@@ -55,6 +56,10 @@ void gf3d_obj_free(ObjData *obj)
     if (obj->boneWeights != NULL)
     {
         free(obj->boneWeights);
+    }
+    if (obj->faceMaterialIndices != NULL)
+    {
+        free(obj->faceMaterialIndices);
     }
     
     if (obj->faceVerts != NULL)
@@ -164,6 +169,7 @@ ObjData *gf3d_obj_load_from_file(const char *filename)
     obj->faceVerts = (Face *)gfc_allocate_array(sizeof(Face),obj->face_count);
     obj->faceNormals = (Face *)gfc_allocate_array(sizeof(Face),obj->face_count);
     obj->faceTexels = (Face *)gfc_allocate_array(sizeof(Face),obj->face_count);
+    obj->faceMaterialIndices = (Uint32*)gfc_allocate_array(sizeof(Uint32), obj->face_count);
     
     gf3d_obj_load_get_data_from_file(obj, mem,fileSize);
     
@@ -233,13 +239,41 @@ void gf3d_obj_load_get_data_from_file(ObjData *obj, const char *mem,size_t fileS
     char buf[128];
     float x,y,z;
     int f[3][3];
+    Uint32 current_material_idx, unique_mat_count, i, found_idx;
+    char known_materials[64][128];
+    char mat_name[128];
 
     if ((!obj)||(!mem))return;
 
     p = mem;
+    unique_mat_count = 0;
+    memset(known_materials, 0, sizeof(known_materials));
     while(sscanf(p, "%s", buf) != EOF)
     {
         p += strlen(buf);//skip what was checked so far
+        if (strcmp(buf, "usemtl") == 0)
+        {
+            memset(mat_name, 0, sizeof(mat_name));
+            if(sscanf(p, "%s", mat_name) != EOF);
+            {
+                found_idx = -1;
+                for (i = 0; i < unique_mat_count; i++) {
+                    if (strcmp(known_materials[i], mat_name) == 0) {
+                        found_idx = i;
+                        break;
+                    }
+                }
+
+                if (found_idx != -1) {
+                    current_material_idx = found_idx;
+                }
+                else if (unique_mat_count < 64) {
+                    strncpy(known_materials[unique_mat_count], mat_name, 128);
+                    current_material_idx = unique_mat_count;
+                    unique_mat_count++;
+                }
+            }
+        }
         switch(buf[0])
         {
             case 'v':
@@ -313,6 +347,10 @@ void gf3d_obj_load_get_data_from_file(ObjData *obj, const char *mem,size_t fileS
               obj->faceVerts[numfaces].verts[2]   = f[2][0] - 1;
               obj->faceTexels[numfaces].verts[2]  = f[2][1] - 1;
               obj->faceNormals[numfaces].verts[2] = f[2][2] - 1;
+              if (obj->faceMaterialIndices != NULL)
+              {
+                  obj->faceMaterialIndices[numfaces] = current_material_idx;
+              }
               numfaces++;
               break;
             default:
@@ -321,6 +359,7 @@ void gf3d_obj_load_get_data_from_file(ObjData *obj, const char *mem,size_t fileS
         c = strchr(p,'\n');//go to the end of line
         p = c + 1;//and then the next line
     }
+    obj->material_count = (unique_mat_count == 0) ? 1 : unique_mat_count;
 }
 
 void gf3d_obj_move(ObjData *obj,GFC_Vector3D offset,GFC_Vector3D rotation)

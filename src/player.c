@@ -39,16 +39,16 @@ Entity* player_spawn(GFC_Vector3D position)
 	if (thePlayer) return thePlayer;
 	self = entity_new();
 	if (!self) return NULL;
-	self->model = model_load("models/dino.model");
+	self->model = model_load("models/0258/0258.model");
 	self->position = position;
 	self->think = player_think;
 	self->update = player_update;
 	self->free = player_free;
-	self->bounds = gfc_box(-5, -5, -5, 10, 10, 10);
+	self->bounds = gfc_box(-2, -2, 0, 4, 4, 4);
 	data = gfc_allocate_array(sizeof(PlayerEntityData), 1);
 	if (data)
 	{
-		data->cameraFollowDistance = 50;
+		data->cameraFollowDistance = 20;
 		data->cameraRotation.x = 0;
 		data->cameraRotation.y = -GFC_PI / 6;
 	}
@@ -132,6 +132,8 @@ int player_think(Entity* self)
 	{
 		gfc_vector3d_normalize(&move);
 		gfc_vector3d_rotate_about_z(&move, data->cameraRotation.x);
+		move.x /= 5;
+		move.y /= 5;
 		self->velocity = move;
 		self->rotation.z = data->cameraRotation.x + GFC_PI;
 	}

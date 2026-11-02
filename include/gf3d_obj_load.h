@@ -15,6 +15,9 @@ struct ObjData_S
     Uint32 bone_count;
     GFC_Vector4D *boneWeights;
     Uint32 weight_count;
+
+    Uint32* faceMaterialIndices;
+    Uint32 material_count;
     
     Face *faceVerts;
     Face *faceNormals;

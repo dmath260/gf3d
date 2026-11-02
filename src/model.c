@@ -210,8 +210,11 @@ Model* model_load(const char* filename)
     const char* str2 = NULL;
     Mesh* mesh;
     Texture* texture;
-    SJson* json, *data;
+    SJson* json, *data, *textures;
     Model* model;
+    Uint32 texCount, primCount;
+    MeshPrimitive* prim;
+    int i;
     if (!filename) return NULL;
     model = model_get_by_filename(filename);
     if (model)
@@ -251,17 +254,44 @@ Model* model_load(const char* filename)
 
     slog_sync();
     str2 = sj_object_get_string(data, "texture");
-    if (str2)
+    textures = sj_object_get_value(data, "textures");
+    primCount = gfc_list_get_count(mesh->primitives);
+    if (textures)
     {
-        texture = gf3d_texture_load(str2);
-        if (!texture) texture = model_manager.defaultTexture;
+        texCount = sj_array_get_count(textures);
+
+        for (i = 0; i < primCount; i++)
+        {
+            prim = gfc_list_nth(mesh->primitives, i);
+            if (!prim) continue;
+
+            str2 = sj_get_string_value(sj_array_get_nth(textures, i));
+            if (str2) prim->texture = gf3d_texture_load(str2);
+            else prim->texture = model_manager.defaultTexture;
+        }
     }
     else
     {
-        slog("Loading default texture for mode %s", filename);
-        texture = model_manager.defaultTexture;
-    }
+        if (str2)
+        {
+            texture = gf3d_texture_load(str2);
+            if (!texture) texture = model_manager.defaultTexture;
+        }
+        else
+        {
+            slog("Loading default texture for model %s", filename);
+            texture = model_manager.defaultTexture;
+        }
 
+        for (i = 0; i < primCount; i++)
+        {
+            prim = gfc_list_nth(mesh->primitives, i);
+            if (!prim) continue;
+
+            prim->texture = texture;
+        }
+    }
+    
     model = model_new();
     if (!model)
     {
@@ -270,7 +300,7 @@ Model* model_load(const char* filename)
         return NULL;
     }
     model->mesh = mesh;
-    model->texture = texture;
+    //model->texture = texture;
     gfc_line_cpy(model->filename, filename);
 
     sj_free(json);
@@ -282,7 +312,7 @@ void model_queue_render_sky(Model* model, GFC_Matrix4 mat, GFC_Color colorMod)
     ModelUBO ubo;
     if (!model) return;
     ubo = model_get_ubo(mat, colorMod);
-    gf3d_mesh_queue_render(model->mesh, model_manager.skyPipe, &ubo, model->texture);
+    gf3d_mesh_queue_render(model->mesh, model_manager.skyPipe, &ubo);
 }
 
 void model_queue_render_highlight(Model* model, GFC_Matrix4 mat, GFC_Color colorMod)
@@ -290,7 +320,7 @@ void model_queue_render_highlight(Model* model, GFC_Matrix4 mat, GFC_Color color
     ModelUBO ubo;
     if (!model) return;
     ubo = model_get_ubo(mat, colorMod);
-    gf3d_mesh_queue_render(model->mesh, model_manager.highPipe, &ubo, model->texture);
+    gf3d_mesh_queue_render(model->mesh, model_manager.highPipe, &ubo);
 }
 
 void model_queue_render(Model* model, GFC_Matrix4 mat, GFC_Color colorMod)
@@ -298,7 +328,7 @@ void model_queue_render(Model* model, GFC_Matrix4 mat, GFC_Color colorMod)
     ModelUBO ubo;
     if (!model) return;
     ubo = model_get_ubo(mat, colorMod);
-    gf3d_mesh_queue_render(model->mesh, model_manager.pipe, &ubo, model->texture);
+    gf3d_mesh_queue_render(model->mesh, model_manager.pipe, &ubo);
 }
 
 /*eol@eof*/

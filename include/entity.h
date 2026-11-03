@@ -17,6 +17,8 @@ typedef struct Entity_S
 	GFC_Vector3D velocity;
 	GFC_Color colorMod;
 
+	Uint8 team;
+
 	int (*think)(struct Entity_S *self);
 	int (*update)(struct Entity_S* self);
 	int (*draw)(struct Entity_S* self);

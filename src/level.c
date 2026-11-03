@@ -151,3 +151,9 @@ void level_draw(Level* level)
 	model_queue_render_sky(level->sky, id, GFC_COLOR_WHITE);
 	model_queue_render(level->terrain, level->terrainMatrix, GFC_COLOR_WHITE);
 }
+
+Sint32 level_get_tile_index(Level *level, Uint16 x, Uint16 y)
+{
+	if (!level) return -1;
+	return ((y * level->tileSize.x) + x);
+}

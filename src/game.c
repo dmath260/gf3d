@@ -72,8 +72,8 @@ int main(int argc,char *argv[])
     item_spawn("treecko", gfc_vector3d(0, 50, 0));
     item_spawn("torchic", gfc_vector3d(0, -50, 0));
     item_spawn("pikachu (m)", gfc_vector3d(50, 0, 0));
-    item_spawn("pikachu (f)", gfc_vector3d(-50, 0, 0));
-    item_spawn("skitty", gfc_vector3d(0, 0, -25));
+    item_spawn("skitty", gfc_vector3d(-50, 0, 0));
+    item_spawn("tile", gfc_vector3d(0, 0, -2));
     level = level_load("levels/testlevel.json");
 
     // main game loop    

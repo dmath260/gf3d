@@ -16,6 +16,108 @@
         ]
       },
       "description": "t h e   C U B E"
+    },
+    {
+      "name": "pikachu (m)",
+      "model": "models/0025/0025.model",
+      "bounds": {
+        "m": [
+          -2,
+          -2,
+          0
+        ],
+        "s": [
+          4,
+          4,
+          4
+        ]
+      },
+      "description": "IT'S PIKACHU!!!"
+    },
+    {
+      "name": "pikachu (f)",
+      "model": "models/0025/0025f.model",
+      "bounds": {
+        "m": [
+          -2,
+          -2,
+          0
+        ],
+        "s": [
+          4,
+          4,
+          4
+        ]
+      },
+      "description": "It's (not) Clefairy!"
+    },
+    {
+      "name": "treecko",
+      "model": "models/0252/0252.model",
+      "bounds": {
+        "m": [
+          -2,
+          -2,
+          0
+        ],
+        "s": [
+          4,
+          4,
+          4
+        ]
+      },
+      "description": "Croagun"
+    },
+    {
+      "name": "torchic",
+      "model": "models/0255/0255.model",
+      "bounds": {
+        "m": [
+          -2,
+          -2,
+          0
+        ],
+        "s": [
+          4,
+          4,
+          4
+        ]
+      },
+      "description": "Keep making bricks for me in Pokopia"
+    },
+    {
+      "name": "mudkip",
+      "model": "models/0258/0258.model",
+      "bounds": {
+        "m": [
+          -2,
+          -2,
+          0
+        ],
+        "s": [
+          4,
+          4,
+          4
+        ]
+      },
+      "description": "So I herd u liek Mudkipz :)"
+    },
+    {
+      "name": "skitty",
+      "model": "models/0300/0300.model",
+      "bounds": {
+        "m": [
+          -2,
+          -2,
+          0
+        ],
+        "s": [
+          4,
+          4,
+          4
+        ]
+      },
+      "description": "I fear no man. But that thing... it scares me."
     }
   ]
 }

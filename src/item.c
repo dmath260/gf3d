@@ -10,10 +10,10 @@ int item_think(Entity* self)
 	if (!self) return;
 	if (entity_collision_other(self, player_get_the()))
 	{
-		self->scale.x += 0.0005;
-		self->scale.y += 0.0005;
-		self->scale.z += 0.0005;
-		//entity_free(self);
+		//self->scale.x += 0.0005;
+		//self->scale.y += 0.0005;
+		//self->scale.z += 0.0005;
+		entity_free(self);
 		//return;
 	}
 }
@@ -40,6 +40,6 @@ Entity* item_spawn(const char* itemName, GFC_Vector3D position)
 	self->position = position;
 	self->bounds = gfc_box_from_config(sj_object_get_value(itemDef, "bounds"));
 	self->think = item_think;
-	self->scale = gfc_vector3d(2, 2, 2);
+	//self->scale = gfc_vector3d(2, 2, 2);
 	return self;
 }

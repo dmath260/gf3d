@@ -484,5 +484,20 @@
     <None Include="..\models\testitem.model">
       <Filter>Resource Files\Models</Filter>
     </None>
+    <None Include="..\models\0252\0252.model">
+      <Filter>Resource Files\Models</Filter>
+    </None>
+    <None Include="..\models\0255\0255.model">
+      <Filter>Resource Files\Models</Filter>
+    </None>
+    <None Include="..\models\0025\0025.model">
+      <Filter>Resource Files\Models</Filter>
+    </None>
+    <None Include="..\models\0025\0025f.model">
+      <Filter>Resource Files\Models</Filter>
+    </None>
+    <None Include="..\models\0300\0300.model">
+      <Filter>Resource Files\Models</Filter>
+    </None>
   </ItemGroup>
 </Project>

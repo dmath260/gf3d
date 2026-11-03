@@ -68,8 +68,12 @@ int main(int argc,char *argv[])
     srand(SDL_GetTicks());
     slog_sync();
     gf2d_mouse_load("actors/mouse.actor");
-    player_spawn(gfc_vector3d(0,0,-1));
-    item_spawn("cube", gfc_vector3d(50,50,0));
+    player_spawn(gfc_vector3d(0,0,0));
+    item_spawn("treecko", gfc_vector3d(0, 50, 0));
+    item_spawn("torchic", gfc_vector3d(0, -50, 0));
+    item_spawn("pikachu (m)", gfc_vector3d(50, 0, 0));
+    item_spawn("pikachu (f)", gfc_vector3d(-50, 0, 0));
+    item_spawn("skitty", gfc_vector3d(0, 0, -25));
     level = level_load("levels/testlevel.json");
 
     // main game loop    

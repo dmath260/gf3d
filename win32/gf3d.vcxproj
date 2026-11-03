@@ -147,7 +147,12 @@
     <None Include="..\config\sky_pipeline.cfg" />
     <None Include="..\defs\item.json" />
     <None Include="..\levels\testlevel.json" />
+    <None Include="..\models\0025\0025.model" />
+    <None Include="..\models\0025\0025f.model" />
+    <None Include="..\models\0252\0252.model" />
+    <None Include="..\models\0255\0255.model" />
     <None Include="..\models\0258\0258.model" />
+    <None Include="..\models\0300\0300.model" />
     <None Include="..\models\dino.model" />
     <None Include="..\models\primitives\cube.model" />
     <None Include="..\models\primitives\cylinder.model" />

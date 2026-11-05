@@ -8,6 +8,7 @@ typedef struct Entity_S
 	Uint8 _inuse;
 	Model* model;
 	GFC_Vector3D position;
+	GFC_Vector3D thinkPos;
 	GFC_Vector3D rotation;
 	GFC_Vector3D scale;
 	GFC_Matrix4 mat;
@@ -15,6 +16,7 @@ typedef struct Entity_S
 	GFC_Box bounds;
 
 	GFC_Vector3D velocity;
+	GFC_Vector3D dir;
 	GFC_Color colorMod;
 
 	Uint8 team;

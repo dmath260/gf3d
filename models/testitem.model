@@ -1,0 +1,6 @@
+{
+    "model":
+    {
+        "obj":"models/primitives/cube.obj"
+    }
+}

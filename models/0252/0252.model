@@ -1,0 +1,11 @@
+{
+  "model": {
+    "obj": "models/0252/0252.obj",
+    "textures": [
+      "models/0252/kimori_sc_00.png",
+      "models/0252/kimori_bd_00.png",
+      "models/0252/kimori_ey_00.png",
+      "models/0252/kimori_mo_00.png"
+    ]
+  }
+}

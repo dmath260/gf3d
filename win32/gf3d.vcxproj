@@ -159,6 +159,7 @@
     <None Include="..\models\primitives\sphere.model" />
     <None Include="..\models\sky.model" />
     <None Include="..\models\testitem.model" />
+    <None Include="..\models\tile.model" />
     <None Include="..\shaders\high.frag" />
     <None Include="..\shaders\model.frag" />
     <None Include="..\shaders\model.vert" />

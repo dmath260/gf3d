@@ -1,0 +1,10 @@
+{
+  "model": {
+    "obj": "models/0300/0300.obj",
+    "textures": [
+      "models/0300/eneko_bd_00.png",
+      "models/0300/eneko_mo_00.png",
+      "models/0300/eneko_ey_00.png"
+    ]
+  }
+}

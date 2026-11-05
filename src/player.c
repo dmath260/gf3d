@@ -36,21 +36,29 @@ Entity* player_spawn(GFC_Vector3D position)
 {
 	PlayerEntityData* data;
 	Entity* self;
+	Level* level;
 	if (thePlayer) return thePlayer;
 	self = entity_new();
 	if (!self) return NULL;
 	self->model = model_load("models/0258/0258.model");
-	self->position = position;
+	level = level_get_the();
+	self->position = gfc_vector3d(
+		level->tileDim * position.x - level->tileDim / 2,
+		level->tileDim * position.y - level->tileDim / 2,
+		position.z
+	);
+	self->thinkPos = self->position;
 	self->think = player_think;
 	self->update = player_update;
 	self->free = player_free;
 	self->bounds = gfc_box(-2, -2, 0, 4, 4, 4);
+	self->scale = gfc_vector3d(2, 2, 2);
 	data = gfc_allocate_array(sizeof(PlayerEntityData), 1);
 	if (data)
 	{
-		data->cameraFollowDistance = 20;
-		data->cameraRotation.x = 0;
-		data->cameraRotation.y = -GFC_PI / 6;
+		data->cameraFollowDistance = 120;
+		data->cameraRotation.x = GFC_PI;
+		data->cameraRotation.y = GFC_PI / 4;
 	}
 	self->data = data;
 	thePlayer = self;
@@ -71,31 +79,32 @@ void player_free(Entity* self)
 
 int player_think(Entity* self)
 {
-	GFC_Edge3D edge = {0};
-	GFC_Vector3D floor;
-	GFC_Vector3D offset;
 	PlayerEntityData* data;
 	GFC_Vector3D move = {0};
+	Level* level;
+	GFC_Vector2D tile = {0};
 	if (!self || !self->data) return 0;
 	data = (PlayerEntityData*)self->data;
 
+	if (!gfc_vector3d_compare(self->position, self->thinkPos)) return 1;
+
 	if (gfc_input_command_down("panup"))
 	{
-		data->cameraFollowDistance -= 0.1;
+		//data->cameraFollowDistance -= 0.1;
 		//data->cameraRotation.y -= 0.05;
 	}
 	if (gfc_input_command_down("pandown"))
 	{
-		data->cameraFollowDistance += 0.1;
+		//data->cameraFollowDistance += 0.1;
 		//data->cameraRotation.y += 0.05;
 	}
 	if (gfc_input_command_down("panleft"))
 	{
-		data->cameraRotation.x -= 0.05;
+		//data->cameraRotation.x -= 0.05;
 	}
 	if (gfc_input_command_down("panright"))
 	{
-		data->cameraRotation.x += 0.05;
+		//data->cameraRotation.x += 0.05;
 	}
 
 	if (gfc_input_command_down("item_up"))
@@ -115,27 +124,26 @@ int player_think(Entity* self)
 		move.x = 1;
 	}
 
-	/**
-	gfc_vector3d_copy(edge.a, self->position);
-	gfc_vector3d_copy(edge.b, self->position);
-	offset = gfc_vector3d(0, 0, 100);
-	gfc_vector3d_add(edge.a, self->position, offset);
-	offset = gfc_vector3d(0, 0, -100);
-	gfc_vector3d_add(edge.b, self->position, offset);
-	if (level_line_test(level_get_the(), edge, &floor))
-	{
-		self->position.z = floor.z + 7;
-	}
-	*/
-
 	if (move.x || move.y)
 	{
-		gfc_vector3d_normalize(&move);
-		gfc_vector3d_rotate_about_z(&move, data->cameraRotation.x);
-		move.x /= 5;
-		move.y /= 5;
+		level = level_get_the();
+		self->thinkPos.x = self->position.x - move.x * level->tileDim;
+		self->thinkPos.y = self->position.y - move.y * level->tileDim;
+		tile = coords_to_tile(level, self->thinkPos.x, self->thinkPos.y);
+		if (tile.x == -1 || !level->tileMap[level_get_tile_index(level, tile.x, tile.y)] ||
+			(move.x != 0 && move.y != 0 && (
+			!level->tileMap[level_get_tile_index(level, tile.x + move.x, tile.y)] ||
+			!level->tileMap[level_get_tile_index(level, tile.x, tile.y + move.y)]
+		))) {
+			self->thinkPos = self->position;
+			return 1;
+		}
+		self->dir = move;
+		//gfc_vector3d_normalize(&move);
+		move.x /= -1;
+		move.y /= -1;
 		self->velocity = move;
-		self->rotation.z = data->cameraRotation.x + GFC_PI;
+		self->rotation.z = SDL_atan2f(move.y, move.x) + GFC_PI / 2;
 	}
 
 	return 1;

@@ -1,0 +1,11 @@
+{
+  "model": {
+    "obj": "models/0258/0258.obj",
+    "textures": [
+      "models/0258/mizugorou_sc_00.png",
+      "models/0258/mizugorou_mo_00.png",
+      "models/0258/mizugorou_ey_00.png",
+      "models/0258/mizugorou_bd_00.png"
+    ]
+  }
+}

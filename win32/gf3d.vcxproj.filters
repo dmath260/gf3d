@@ -499,5 +499,8 @@
     <None Include="..\models\0300\0300.model">
       <Filter>Resource Files\Models</Filter>
     </None>
+    <None Include="..\models\tile.model">
+      <Filter>Resource Files\Models</Filter>
+    </None>
   </ItemGroup>
 </Project>

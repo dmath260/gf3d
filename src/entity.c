@@ -85,15 +85,28 @@ void entity_update(Entity* self)
 	if (!entity_move_check(self, self->velocity))
 	{
 		gfc_vector3d_add(self->position, self->position, self->velocity);
+		if (self->dir.x == -1 && self->position.x >= self->thinkPos.x ||
+			self->dir.x == 1 && self->position.x <= self->thinkPos.x)
+		{
+			self->position.x = self->thinkPos.x;
+			self->dir.x = 0;
+			self->velocity.x = 0;
+		}
+		if (self->dir.y == -1 && self->position.y >= self->thinkPos.y ||
+			self->dir.y == 1 && self->position.y <= self->thinkPos.y)
+		{
+			self->position.y = self->thinkPos.y;
+			self->dir.y = 0;
+			self->velocity.y = 0;
+		}
 	}
 
 	// Dampening
-	if (gfc_vector3d_magnitude_squared(self->velocity) > 0.01)
-	{
-		gfc_vector3d_scale(self->velocity, self->velocity, 0.8);
-	}
-	else gfc_vector3d_clear(self->velocity);
-
+	//if (gfc_vector3d_magnitude_squared(self->velocity) > 0.01)
+	//{
+	//	gfc_vector3d_scale(self->velocity, self->velocity, 0.8);
+	//}
+	//else gfc_vector3d_clear(self->velocity);
 	if (self->update)
 	{
 		if (self->update(self) == 1) return;

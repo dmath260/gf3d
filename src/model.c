@@ -152,8 +152,13 @@ void model_free(Model *model)
 
 void model_delete(Model* model)
 {
+    int i;
     if (!model) return;
-    gf3d_texture_free(model->texture);
+    for (i = 0; i < model->textureCount; i++)
+    {
+        gf3d_texture_free(model->textures[i]);
+    }
+    free(model->textures);
     gf3d_mesh_free(model->mesh);
     //model_free(model);
     memset(model, 0, sizeof(Model));
@@ -209,11 +214,10 @@ Model* model_load(const char* filename)
     const char* str = NULL;
     const char* str2 = NULL;
     Mesh* mesh;
-    Texture* texture;
+    Texture* texture, **texList;
     SJson* json, *data, *textures;
     Model* model;
-    Uint32 texCount, primCount;
-    MeshPrimitive* prim;
+    Uint32 primCount;
     int i;
     if (!filename) return NULL;
     model = model_get_by_filename(filename);
@@ -256,18 +260,17 @@ Model* model_load(const char* filename)
     str2 = sj_object_get_string(data, "texture");
     textures = sj_object_get_value(data, "textures");
     primCount = gfc_list_get_count(mesh->primitives);
+    texList = gfc_allocate_array(sizeof(Texture*), primCount);
     if (textures)
     {
-        texCount = sj_array_get_count(textures);
-
         for (i = 0; i < primCount; i++)
         {
-            prim = gfc_list_nth(mesh->primitives, i);
-            if (!prim) continue;
-
             str2 = sj_get_string_value(sj_array_get_nth(textures, i));
-            if (str2) prim->texture = gf3d_texture_load(str2);
-            else prim->texture = model_manager.defaultTexture;
+            if (str2) texList[i] = gf3d_texture_load(str2);
+            else {
+                texList[i] = model_manager.defaultTexture;
+                model_manager.defaultTexture->_refcount++;
+            }
         }
     }
     else
@@ -275,20 +278,23 @@ Model* model_load(const char* filename)
         if (str2)
         {
             texture = gf3d_texture_load(str2);
-            if (!texture) texture = model_manager.defaultTexture;
+            if (!texture)
+            {
+                texture = model_manager.defaultTexture;
+                model_manager.defaultTexture->_refcount++;
+            }
         }
         else
         {
             slog("Loading default texture for model %s", filename);
             texture = model_manager.defaultTexture;
+            model_manager.defaultTexture->_refcount++;
         }
 
         for (i = 0; i < primCount; i++)
         {
-            prim = gfc_list_nth(mesh->primitives, i);
-            if (!prim) continue;
-
-            prim->texture = texture;
+            texList[i] = texture;
+            if (i > 0) texture->_refcount++;
         }
     }
     
@@ -297,10 +303,13 @@ Model* model_load(const char* filename)
     {
         slog("Failed to get an empty space in memory for model %s", filename);
         sj_free(json);
+        free(texList);
         return NULL;
     }
     model->mesh = mesh;
-    //model->texture = texture;
+    model->textures = texList;
+    model->textureCount = primCount;
+    model->texture = model_manager.defaultTexture;
     gfc_line_cpy(model->filename, filename);
 
     sj_free(json);
@@ -312,7 +321,14 @@ void model_queue_render_sky(Model* model, GFC_Matrix4 mat, GFC_Color colorMod)
     ModelUBO ubo;
     if (!model) return;
     ubo = model_get_ubo(mat, colorMod);
-    gf3d_mesh_queue_render(model->mesh, model_manager.skyPipe, &ubo);
+    gf3d_mesh_queue_render(
+        model->mesh,
+        model_manager.skyPipe,
+        &ubo,
+        model->textures,
+        model->textureCount,
+        model->texture
+    );
 }
 
 void model_queue_render_highlight(Model* model, GFC_Matrix4 mat, GFC_Color colorMod)
@@ -320,7 +336,14 @@ void model_queue_render_highlight(Model* model, GFC_Matrix4 mat, GFC_Color color
     ModelUBO ubo;
     if (!model) return;
     ubo = model_get_ubo(mat, colorMod);
-    gf3d_mesh_queue_render(model->mesh, model_manager.highPipe, &ubo);
+    gf3d_mesh_queue_render(
+        model->mesh,
+        model_manager.highPipe,
+        &ubo,
+        model->textures,
+        model->textureCount,
+        model->texture
+    );
 }
 
 void model_queue_render(Model* model, GFC_Matrix4 mat, GFC_Color colorMod)
@@ -328,7 +351,14 @@ void model_queue_render(Model* model, GFC_Matrix4 mat, GFC_Color colorMod)
     ModelUBO ubo;
     if (!model) return;
     ubo = model_get_ubo(mat, colorMod);
-    gf3d_mesh_queue_render(model->mesh, model_manager.pipe, &ubo);
+    gf3d_mesh_queue_render(
+        model->mesh,
+        model_manager.pipe,
+        &ubo,
+        model->textures,
+        model->textureCount,
+        model->texture
+    );
 }
 
 /*eol@eof*/

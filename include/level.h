@@ -16,12 +16,14 @@ typedef struct
 	Model* tile;
 	GFC_TextLine tileFile;
 	Uint8 tileDim;
+	Model* wall;
+	GFC_TextLine wallFile;
 	GFC_Box bounds; //don't let anything leave this
 	Mix_Music* backgroundMusic;
 	GFC_TextLine musicFile;
 	SJson* json; // keep the json around in case we need to reference it
 	Uint8* tileMap;
-	Entity* entityMap;
+	Entity** entityMap;
 	GFC_Vector2I tileSize; // how many tiles wide and tall
 }Level;
 

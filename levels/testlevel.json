@@ -3,6 +3,7 @@
     "sky": "models/sky.model",
     "_terrain": "models/terrain.model",
     "tile": "models/tile.model",
+    "wall": "models/wall.model",
     "music": "sounds/music/sound_00.wav",
     "bounds": {
       "m": [ 0, 0, -20 ],

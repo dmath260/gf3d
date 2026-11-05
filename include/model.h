@@ -15,7 +15,9 @@ typedef struct
 {
     int                         _refCount;
     GFC_TextLine                filename;               /**<the name of the file used to create the sprite*/
-    Texture                    *texture;
+    Texture                    *texture; // in case mesh textures don't load properly
+    Texture                   **textures; // one per meshPrimitive
+    Uint32                      textureCount;
     Mesh                       *mesh;                   /**<GPU handles for mesh data*/
     VkDescriptorSet            *descriptorSet;
 }Model;

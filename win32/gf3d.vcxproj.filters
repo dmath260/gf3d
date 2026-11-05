@@ -64,6 +64,18 @@
     <Filter Include="Resource Files\Defs">
       <UniqueIdentifier>{103dbd34-cdb2-42a8-b877-4fab693bd211}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files\Models\Pokemon">
+      <UniqueIdentifier>{c39f3cf8-bec3-4eb7-a44f-f0cc979e6616}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Models\Primitives">
+      <UniqueIdentifier>{d6c70519-af99-413a-91d5-31b4e927388f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Models\Unused">
+      <UniqueIdentifier>{4d6ffab0-aa89-432c-8e58-6309cf7a1f3e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Models\World">
+      <UniqueIdentifier>{37983727-3691-44f3-8887-27d1b3770f51}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\gfc\simple_logger\include\simple_logger.h">
@@ -436,9 +448,6 @@
     <None Include="..\config\overlay_pipeline.cfg">
       <Filter>Resource Files\Pipelines</Filter>
     </None>
-    <None Include="..\models\dino.model">
-      <Filter>Resource Files\Models</Filter>
-    </None>
     <None Include="..\config\sky_pipeline.cfg">
       <Filter>Resource Files\Pipelines</Filter>
     </None>
@@ -466,41 +475,47 @@
     <None Include="..\defs\item.json">
       <Filter>Resource Files\Defs</Filter>
     </None>
-    <None Include="..\models\0258\0258.model">
-      <Filter>Resource Files\Models</Filter>
-    </None>
-    <None Include="..\models\sky.model">
-      <Filter>Resource Files\Models</Filter>
-    </None>
-    <None Include="..\models\primitives\cylinder.model">
-      <Filter>Resource Files\Models</Filter>
-    </None>
-    <None Include="..\models\primitives\sphere.model">
-      <Filter>Resource Files\Models</Filter>
-    </None>
-    <None Include="..\models\primitives\cube.model">
-      <Filter>Resource Files\Models</Filter>
-    </None>
-    <None Include="..\models\testitem.model">
-      <Filter>Resource Files\Models</Filter>
-    </None>
-    <None Include="..\models\0252\0252.model">
-      <Filter>Resource Files\Models</Filter>
-    </None>
-    <None Include="..\models\0255\0255.model">
-      <Filter>Resource Files\Models</Filter>
-    </None>
     <None Include="..\models\0025\0025.model">
-      <Filter>Resource Files\Models</Filter>
+      <Filter>Resource Files\Models\Pokemon</Filter>
     </None>
     <None Include="..\models\0025\0025f.model">
-      <Filter>Resource Files\Models</Filter>
+      <Filter>Resource Files\Models\Pokemon</Filter>
+    </None>
+    <None Include="..\models\0252\0252.model">
+      <Filter>Resource Files\Models\Pokemon</Filter>
+    </None>
+    <None Include="..\models\0255\0255.model">
+      <Filter>Resource Files\Models\Pokemon</Filter>
+    </None>
+    <None Include="..\models\0258\0258.model">
+      <Filter>Resource Files\Models\Pokemon</Filter>
     </None>
     <None Include="..\models\0300\0300.model">
-      <Filter>Resource Files\Models</Filter>
+      <Filter>Resource Files\Models\Pokemon</Filter>
+    </None>
+    <None Include="..\models\primitives\cube.model">
+      <Filter>Resource Files\Models\Primitives</Filter>
+    </None>
+    <None Include="..\models\primitives\cylinder.model">
+      <Filter>Resource Files\Models\Primitives</Filter>
+    </None>
+    <None Include="..\models\primitives\sphere.model">
+      <Filter>Resource Files\Models\Primitives</Filter>
+    </None>
+    <None Include="..\models\dino.model">
+      <Filter>Resource Files\Models\Unused</Filter>
+    </None>
+    <None Include="..\models\testitem.model">
+      <Filter>Resource Files\Models\Unused</Filter>
+    </None>
+    <None Include="..\models\sky.model">
+      <Filter>Resource Files\Models\World</Filter>
     </None>
     <None Include="..\models\tile.model">
-      <Filter>Resource Files\Models</Filter>
+      <Filter>Resource Files\Models\World</Filter>
+    </None>
+    <None Include="..\models\wall.model">
+      <Filter>Resource Files\Models\World</Filter>
     </None>
   </ItemGroup>
 </Project>

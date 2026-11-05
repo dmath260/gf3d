@@ -117,6 +117,12 @@ Level* level_load(const char* filename)
 		level->tile = model_load(str);
 		if (level->tile) gfc_line_cpy(level->tileFile, str);
 	}
+	str = sj_object_get_string(data, "wall");
+	if (str)
+	{
+		level->wall = model_load(str);
+		if (level->wall) gfc_line_cpy(level->wallFile, str);
+	}
 	sj_object_get_int(data, "tileDim", &level->tileDim);
 	if (!level->tileDim)
 	{
@@ -218,15 +224,19 @@ void level_free(Level* level)
 	if (!level) return;
 	model_free(level->sky);
 	model_free(level->terrain);
+	model_free(level->tile);
+	model_free(level->wall);
 	Mix_HaltMusic();
 	Mix_FreeMusic(level->backgroundMusic);
 	sj_free(level->json);
+	free(level->tileMap);
+	free(level->entityMap);
 	free(level);
 }
 
 void level_draw(Level* level)
 {
-	int i, j, k;
+	int i, j;
 	GFC_Matrix4 id;
 	if (!level) return;
 	gfc_matrix4_identity(id);
@@ -236,23 +246,32 @@ void level_draw(Level* level)
 	{
 		for (j = -5; j < level->tileSize.y + 5; j++)
 		{
-			k = -16;
-			while (1)
+			gfc_matrix4_from_vectors(
+				id,
+				gfc_vector3d(
+					level->tileDim * i + level->tileDim / 2,
+					level->tileDim * j + level->tileDim / 2,
+					-16
+				),
+				gfc_vector3d(0, 0, 0),
+				gfc_vector3d(1, 1, 1)
+			);
+			model_queue_render(level->tile, id, GFC_COLOR_WHITE);
+
+			if ((i < 0 || j < 0 || level_get_tile_index(level, i, j) == -1) ||
+				!level->tileMap[level_get_tile_index(level, i, j)])
 			{
 				gfc_matrix4_from_vectors(
 					id,
 					gfc_vector3d(
 						level->tileDim * i + level->tileDim / 2,
 						level->tileDim * j + level->tileDim / 2,
-						k
+						-8
 					),
 					gfc_vector3d(0, 0, 0),
 					gfc_vector3d(1, 1, 1)
 				);
-				model_queue_render(level->tile, id, GFC_COLOR_WHITE);
-				if (k == -16 && (i < 0 || j < 0 || level_get_tile_index(level, i, j) == -1)) k = -8;
-				else if (k == -16 && !level->tileMap[level_get_tile_index(level, i, j)]) k = -8;
-				else break;
+				model_queue_render(level->wall, id, GFC_COLOR_WHITE);
 			}
 		}
 	}

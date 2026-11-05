@@ -138,10 +138,6 @@ void gf3d_mesh_primative_free(MeshPrimitive* prim)
     {
         gf3d_obj_free(prim->objData);
     }
-    if (prim->texture)
-    {
-        gf3d_texture_free(prim->texture);
-    }
     free(prim);
 }
 
@@ -337,23 +333,33 @@ VkVertexInputBindingDescription* gf3d_mesh_get_bind_description()
     return &mesh_manager.bindingDescription;
 }
 
-void gf3d_mesh_queue_render(Mesh* mesh, Pipeline* pipe, void* uboData)
+void gf3d_mesh_queue_render(
+    Mesh* mesh,
+    Pipeline* pipe,
+    void* uboData,
+    Texture** textures,
+    Uint32 textureCount,
+    Texture* backup
+)
 {
     int i, c;
     MeshPrimitive* prim;
+    Texture* tex;
     if (!mesh || !uboData || !pipe) return;
     c = gfc_list_count(mesh->primitives);
     for (i = 0; i < c; i++)
     {
         prim = gfc_list_nth(mesh->primitives, i);
         if (!prim) continue;
+        tex = backup;
+        if (textures && i < textureCount && textures[i]) tex = textures[i];
         gf3d_pipeline_queue_render(
             pipe,
             prim->vertexBuffer,
             prim->vertexCount,
             prim->faceBuffer,
             uboData,
-            prim->texture
+            tex
         );
     }
 }

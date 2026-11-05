@@ -2,6 +2,6 @@
     "model":
     {
         "obj":"models/primitives/cube_tile.obj",
-        "_texture":"images/base_tile.png"
+        "texture":"images/tile1.png"
     }
 }

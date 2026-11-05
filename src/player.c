@@ -37,6 +37,7 @@ Entity* player_spawn(GFC_Vector3D position)
 	PlayerEntityData* data;
 	Entity* self;
 	Level* level;
+	GFC_Vector2D tile = {0};
 	if (thePlayer) return thePlayer;
 	self = entity_new();
 	if (!self) return NULL;
@@ -48,6 +49,8 @@ Entity* player_spawn(GFC_Vector3D position)
 		position.z
 	);
 	self->thinkPos = self->position;
+	tile = coords_to_tile(level, self->thinkPos.x, self->thinkPos.y);
+	level->entityMap[level_get_tile_index(level, tile.x, tile.y)] = self;
 	self->think = player_think;
 	self->update = player_update;
 	self->free = player_free;
@@ -126,6 +129,7 @@ int player_think(Entity* self)
 
 	if (move.x || move.y)
 	{
+		self->rotation.z = SDL_atan2f(move.y, move.x) - GFC_PI / 2;
 		level = level_get_the();
 		self->thinkPos.x = self->position.x - move.x * level->tileDim;
 		self->thinkPos.y = self->position.y - move.y * level->tileDim;
@@ -138,12 +142,12 @@ int player_think(Entity* self)
 			self->thinkPos = self->position;
 			return 1;
 		}
+		level->entityMap[level_get_tile_index(level, tile.x, tile.y)] = self;
 		self->dir = move;
 		//gfc_vector3d_normalize(&move);
 		move.x /= -1;
 		move.y /= -1;
 		self->velocity = move;
-		self->rotation.z = SDL_atan2f(move.y, move.x) + GFC_PI / 2;
 	}
 
 	return 1;

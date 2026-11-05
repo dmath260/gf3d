@@ -1,0 +1,7 @@
+{
+    "model":
+    {
+        "obj":"models/primitives/cube_tile.obj",
+        "texture":"images/wall1.png"
+    }
+}

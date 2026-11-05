@@ -46,7 +46,6 @@ typedef struct
     VkBuffer        faceBuffer;
     VkDeviceMemory  faceBufferMemory;
     ObjData        *objData;
-    Texture        *texture;
 }MeshPrimitive;
 
 typedef struct
@@ -109,8 +108,17 @@ void gf3d_mesh_free(Mesh *mesh);
  * @param mesh the mesh to render
  * @param pipe the pipeline
  * @param uboData buffer data
- * @param texture the texture
+ * @param textures list of textures for each primitive in the mesh
+ * @param textureCount the number of textures in the mesh
+ * @param backup the fallback texture in case any primitives don't have their own textures
  */
-void gf3d_mesh_queue_render(Mesh* mesh, Pipeline* pipe, void* uboData);
+void gf3d_mesh_queue_render(
+    Mesh* mesh,
+    Pipeline* pipe,
+    void* uboData,
+    Texture** textures,
+    Uint32 textureCount,
+    Texture* backup
+);
 
 #endif

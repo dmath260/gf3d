@@ -255,6 +255,9 @@
     <ClInclude Include="..\include\draw_3d.h">
       <Filter>Header Files\pmd</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\pokemon.h">
+      <Filter>Header Files\pmd</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\gfc\simple_logger\src\simple_logger.c">
@@ -428,6 +431,9 @@
     <ClCompile Include="..\src\draw_3d.c">
       <Filter>Source Files\pmd</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\pokemon.c">
+      <Filter>Source Files\pmd</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\shaders\sprite.frag">
@@ -516,6 +522,30 @@
     </None>
     <None Include="..\models\wall.model">
       <Filter>Resource Files\Models\World</Filter>
+    </None>
+    <None Include="..\defs\pokemon.json">
+      <Filter>Resource Files\Defs</Filter>
+    </None>
+    <None Include="..\models\0387\0387.model">
+      <Filter>Resource Files\Models\Pokemon</Filter>
+    </None>
+    <None Include="..\models\0390\0390.model">
+      <Filter>Resource Files\Models\Pokemon</Filter>
+    </None>
+    <None Include="..\models\0393\0393.model">
+      <Filter>Resource Files\Models\Pokemon</Filter>
+    </None>
+    <None Include="..\models\0399\0399.model">
+      <Filter>Resource Files\Models\Pokemon</Filter>
+    </None>
+    <None Include="..\models\0403\0403.model">
+      <Filter>Resource Files\Models\Pokemon</Filter>
+    </None>
+    <None Include="..\models\0418\0418.model">
+      <Filter>Resource Files\Models\Pokemon</Filter>
+    </None>
+    <None Include="..\models\0418\0418f.model">
+      <Filter>Resource Files\Models\Pokemon</Filter>
     </None>
   </ItemGroup>
 </Project>

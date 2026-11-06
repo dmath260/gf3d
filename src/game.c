@@ -23,6 +23,7 @@
 
 #include "model.h"
 #include "entity.h"
+#include "pokemon.h"
 #include "player.h"
 #include "level.h"
 #include "item.h"
@@ -62,6 +63,7 @@ int main(int argc,char *argv[])
     gf2d_font_init("config/font.cfg");
     gf2d_actor_init(1000);
     gfc_config_def_load("defs/item.json");
+    gfc_config_def_load("defs/pokemon.json");
     entity_init(1000);
     
     //game init
@@ -69,18 +71,8 @@ int main(int argc,char *argv[])
     slog_sync();
     gf2d_mouse_load("actors/mouse.actor");
     level = level_load("levels/testlevel.json");
-    player_spawn(gfc_vector3d(37, 29, 0));
-    /*
-    item_spawn("treecko", gfc_vector3d(0, 50, 0));
-    item_spawn("torchic", gfc_vector3d(0, -50, 0));
-    item_spawn("pikachu (m)", gfc_vector3d(50, 0, 0));
-    item_spawn("skitty", gfc_vector3d(-50, 0, 0));
-    item_spawn("tile", gfc_vector3d(0, 50, -8));
-    item_spawn("tile", gfc_vector3d(0, -50, -8));
-    item_spawn("tile", gfc_vector3d(50, 0, -8));
-    item_spawn("tile", gfc_vector3d(-50, 0, -8));
-    item_spawn("tile", gfc_vector3d(0, 0, -8));
-    */
+    player_spawn(gfc_vector3d(37, 29, 0), "Mudkip");
+    pokemon_spawn(gfc_vector3d(38, 29, 0), "Treecko", 0);
 
     // main game loop    
     while(!_done)

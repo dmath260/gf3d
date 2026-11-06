@@ -1,0 +1,10 @@
+{
+  "model": {
+    "obj": "models/0418/0418f.obj",
+    "textures": [
+      "models/0418/buizeru_f_ey_00.png",
+      "models/0418/buizeru_f_mo_00.png",
+      "models/0418/buizeru_f_bd_00.png"
+    ]
+  }
+}

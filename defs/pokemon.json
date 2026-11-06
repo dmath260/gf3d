@@ -1,0 +1,277 @@
+{
+  "items": [
+    {
+      "name": "Pikachu (M)",
+      "model": "models/0025/0025.model",
+      "bounds": {
+        "m": [
+          -2,
+          -2,
+          0
+        ],
+        "s": [
+          4,
+          4,
+          4
+        ]
+      },
+      "scale": [
+        2,
+        2,
+        2
+      ]
+    },
+    {
+      "name": "Pikachu (F)",
+      "model": "models/0025/0025f.model",
+      "bounds": {
+        "m": [
+          -2,
+          -2,
+          0
+        ],
+        "s": [
+          4,
+          4,
+          4
+        ]
+      },
+      "scale": [
+        2,
+        2,
+        2
+      ]
+    },
+    {
+      "name": "Treecko",
+      "model": "models/0252/0252.model",
+      "bounds": {
+        "m": [
+          -2,
+          -2,
+          0
+        ],
+        "s": [
+          4,
+          4,
+          4
+        ]
+      },
+      "scale": [
+        2,
+        2,
+        2
+      ]
+    },
+    {
+      "name": "Torchic",
+      "model": "models/0255/0255.model",
+      "bounds": {
+        "m": [
+          -2,
+          -2,
+          0
+        ],
+        "s": [
+          4,
+          4,
+          4
+        ]
+      },
+      "scale": [
+        2,
+        2,
+        2
+      ]
+    },
+    {
+      "name": "Mudkip",
+      "model": "models/0258/0258.model",
+      "bounds": {
+        "m": [
+          -2,
+          -2,
+          0
+        ],
+        "s": [
+          4,
+          4,
+          4
+        ]
+      },
+      "scale": [
+        2,
+        2,
+        2
+      ]
+    },
+    {
+      "name": "Skitty",
+      "model": "models/0300/0300.model",
+      "bounds": {
+        "m": [
+          -2,
+          -2,
+          0
+        ],
+        "s": [
+          4,
+          4,
+          4
+        ]
+      },
+      "scale": [
+        2,
+        2,
+        2
+      ]
+    },
+    {
+      "name": "Turtwig",
+      "model": "models/0387/0387.model",
+      "bounds": {
+        "m": [
+          -2,
+          -2,
+          0
+        ],
+        "s": [
+          4,
+          4,
+          4
+        ]
+      },
+      "scale": [
+        2,
+        2,
+        2
+      ]
+    },
+    {
+      "name": "Chimchar",
+      "model": "models/0390/0390.model",
+      "bounds": {
+        "m": [
+          -2,
+          -2,
+          0
+        ],
+        "s": [
+          4,
+          4,
+          4
+        ]
+      },
+      "scale": [
+        2,
+        2,
+        2
+      ]
+    },
+    {
+      "name": "Piplup",
+      "model": "models/0393/0393.model",
+      "bounds": {
+        "m": [
+          -2,
+          -2,
+          0
+        ],
+        "s": [
+          4,
+          4,
+          4
+        ]
+      },
+      "scale": [
+        2,
+        2,
+        2
+      ]
+    },
+    {
+      "name": "Bidoof",
+      "model": "models/0399/0399.model",
+      "bounds": {
+        "m": [
+          -2,
+          -2,
+          0
+        ],
+        "s": [
+          4,
+          4,
+          4
+        ]
+      },
+      "scale": [
+        2,
+        2,
+        2
+      ]
+    },
+    {
+      "name": "Shinx",
+      "model": "models/0403/0403.model",
+      "bounds": {
+        "m": [
+          -2,
+          -2,
+          0
+        ],
+        "s": [
+          4,
+          4,
+          4
+        ]
+      },
+      "scale": [
+        2,
+        2,
+        2
+      ]
+    },
+    {
+      "name": "Buizel (M)",
+      "model": "models/0418/0418.model",
+      "bounds": {
+        "m": [
+          -2,
+          -2,
+          0
+        ],
+        "s": [
+          4,
+          4,
+          4
+        ]
+      },
+      "scale": [
+        1.5,
+        1.5,
+        1.5
+      ]
+    },
+    {
+      "name": "Buizel (F)",
+      "model": "models/0418/0418f.model",
+      "bounds": {
+        "m": [
+          -2,
+          -2,
+          0
+        ],
+        "s": [
+          4,
+          4,
+          4
+        ]
+      },
+      "scale": [
+        1.5,
+        1.5,
+        1.5
+      ]
+    }
+  ]
+}

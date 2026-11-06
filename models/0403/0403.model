@@ -1,0 +1,10 @@
+{
+  "model": {
+    "obj": "models/0403/0403.obj",
+    "textures": [
+      "models/0403/korinku_ey_00.png",
+      "models/0403/korinku_mo_00.png",
+      "models/0403/korinku_bd_00.png"
+    ]
+  }
+}

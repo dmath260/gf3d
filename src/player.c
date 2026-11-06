@@ -32,30 +32,17 @@ Entity* player_get_the()
 	return thePlayer;
 }
 
-Entity* player_spawn(GFC_Vector3D position)
+Entity* player_spawn(GFC_Vector3D position, const char* pokemonName)
 {
 	PlayerEntityData* data;
 	Entity* self;
-	Level* level;
-	GFC_Vector2D tile = {0};
 	if (thePlayer) return thePlayer;
-	self = entity_new();
+	self = pokemon_spawn(position, pokemonName, 0);
 	if (!self) return NULL;
-	self->model = model_load("models/0258/0258.model");
-	level = level_get_the();
-	self->position = gfc_vector3d(
-		level->tileDim * position.x - level->tileDim / 2,
-		level->tileDim * position.y - level->tileDim / 2,
-		position.z
-	);
-	self->thinkPos = self->position;
-	tile = coords_to_tile(level, self->thinkPos.x, self->thinkPos.y);
-	level->entityMap[level_get_tile_index(level, tile.x, tile.y)] = self;
 	self->think = player_think;
 	self->update = player_update;
 	self->free = player_free;
-	self->bounds = gfc_box(-2, -2, 0, 4, 4, 4);
-	self->scale = gfc_vector3d(2, 2, 2);
+
 	data = gfc_allocate_array(sizeof(PlayerEntityData), 1);
 	if (data)
 	{
@@ -86,6 +73,7 @@ int player_think(Entity* self)
 	GFC_Vector3D move = {0};
 	Level* level;
 	GFC_Vector2D tile = {0};
+	int idx;
 	if (!self || !self->data) return 0;
 	data = (PlayerEntityData*)self->data;
 
@@ -134,7 +122,8 @@ int player_think(Entity* self)
 		self->thinkPos.x = self->position.x - move.x * level->tileDim;
 		self->thinkPos.y = self->position.y - move.y * level->tileDim;
 		tile = coords_to_tile(level, self->thinkPos.x, self->thinkPos.y);
-		if (tile.x == -1 || !level->tileMap[level_get_tile_index(level, tile.x, tile.y)] ||
+		idx = level_get_tile_index(level, tile.x, tile.y);
+		if (tile.x == -1 || !level->tileMap[idx] || level->entityMap[idx] ||
 			(move.x != 0 && move.y != 0 && (
 			!level->tileMap[level_get_tile_index(level, tile.x + move.x, tile.y)] ||
 			!level->tileMap[level_get_tile_index(level, tile.x, tile.y + move.y)]
@@ -142,7 +131,9 @@ int player_think(Entity* self)
 			self->thinkPos = self->position;
 			return 1;
 		}
-		level->entityMap[level_get_tile_index(level, tile.x, tile.y)] = self;
+		tile = coords_to_tile(level, self->position.x, self->position.y);
+		level->entityMap[level_get_tile_index(level, tile.x, tile.y)] = NULL;
+		level->entityMap[idx] = self;
 		self->dir = move;
 		//gfc_vector3d_normalize(&move);
 		move.x /= -1;

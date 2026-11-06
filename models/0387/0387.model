@@ -1,0 +1,9 @@
+{
+  "model": {
+    "obj": "models/0387/0387.obj",
+    "textures": [
+      "models/0387/naetoru_bd_00.png",
+      "models/0387/naetoru_ey_00.png"
+    ]
+  }
+}

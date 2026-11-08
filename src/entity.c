@@ -3,6 +3,8 @@
 #include "entity.h"
 #include "level.h"
 #include "draw_3d.h"
+#include "player.h"
+#include "turn.h"
 
 typedef struct
 {
@@ -13,7 +15,7 @@ typedef struct
 
 static EntityManager entity_manager = {0};
 
-void entity_close();
+void entity_close(void);
 
 void entity_init(Uint32 maxEnts)
 {
@@ -61,10 +63,14 @@ void entity_free(Entity* ent)
 
 void entity_think(Entity* self)
 {
-	if (!self || !self->_inuse) return;
+	if (!self || !self->_inuse || (self->team < 2 && !turn_is_my(self))) return;
 	if (self->think)
 	{
-		if (self->think(self) == 1) return;
+		if (self->think(self) == 1)
+		{
+			turn_increment(self);
+			return;
+		}
 	}
 }
 
@@ -89,6 +95,7 @@ void entity_update(Entity* self)
 			self->dir.x == 1 && self->position.x <= self->thinkPos.x)
 		{
 			self->position.x = self->thinkPos.x;
+			self->positionTile.x = self->thinkPosTile.x;
 			self->dir.x = 0;
 			self->velocity.x = 0;
 		}
@@ -96,6 +103,7 @@ void entity_update(Entity* self)
 			self->dir.y == 1 && self->position.y <= self->thinkPos.y)
 		{
 			self->position.y = self->thinkPos.y;
+			self->positionTile.y = self->thinkPosTile.y;
 			self->dir.y = 0;
 			self->velocity.y = 0;
 		}
@@ -127,7 +135,7 @@ void entity_system_update()
 int entity_collision_other(Entity* self, Entity* other)
 {
 	GFC_Box a, b;
-	if (!self || !other) return;
+	if (!self || !other) return 0;
 	a = self->bounds;
 	b = other->bounds;
 	gfc_vector3d_add(a, a, self->position);
@@ -147,6 +155,7 @@ int entity_move_check(Entity* self, GFC_Vector3D offset)
 
 void entity_draw(Entity* ent)
 {
+	GFC_Color colorMod;
 	GFC_Box aabb;
 	if (!ent || !ent->_inuse) return;
 	if (ent->draw)
@@ -163,7 +172,10 @@ void entity_draw(Entity* ent)
 	aabb.h *= ent->scale.y;
 	aabb.d *= ent->scale.z;
 	gfc_vector3d_add(aabb,aabb,ent->position);
-	draw_3d_cube(aabb, GFC_COLOR_GREEN);
+	if (ent == player_get_the()) colorMod = GFC_COLOR_YELLOW;
+	else if (!ent->team) colorMod = GFC_COLOR_GREEN;
+	else colorMod = GFC_COLOR_RED;
+	draw_3d_cube(aabb, colorMod);
 }
 
 void entity_system_draw()

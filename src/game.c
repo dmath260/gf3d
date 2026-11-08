@@ -28,6 +28,7 @@
 #include "level.h"
 #include "item.h"
 #include "draw_3d.h"
+#include "turn.h"
 
 extern int __DEBUG;
 
@@ -65,14 +66,16 @@ int main(int argc,char *argv[])
     gfc_config_def_load("defs/item.json");
     gfc_config_def_load("defs/pokemon.json");
     entity_init(1000);
+    turn_init(5, 20, 1000);
     
     //game init
     srand(SDL_GetTicks());
     slog_sync();
     gf2d_mouse_load("actors/mouse.actor");
     level = level_load("levels/testlevel.json");
-    player_spawn(gfc_vector3d(37, 29, 0), "Mudkip");
-    pokemon_spawn(gfc_vector3d(38, 29, 0), "Treecko", 0);
+    player_spawn(gfc_vector3d(36, 28, 0), "Mudkip");
+    pokemon_spawn(gfc_vector3d(37, 28, 0), "Treecko", 0);
+    pokemon_spawn(gfc_vector3d(36, 4, 0), "Shinx", 1);
 
     // main game loop    
     while(!_done)

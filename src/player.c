@@ -6,6 +6,7 @@
 
 #include "player.h"
 #include "level.h"
+#include "turn.h"
 
 static Entity* thePlayer = NULL;
 
@@ -52,6 +53,7 @@ Entity* player_spawn(GFC_Vector3D position, const char* pokemonName)
 	}
 	self->data = data;
 	thePlayer = self;
+	turn_set_player(self);
 
 	return self;
 }
@@ -73,11 +75,9 @@ int player_think(Entity* self)
 	GFC_Vector3D move = {0};
 	Level* level;
 	GFC_Vector2D tile = {0};
-	int idx;
-	if (!self || !self->data) return 0;
+	int idx_new, idx_old;
+	if (!self || !self->data || turn_anybody_moving()) return 0;
 	data = (PlayerEntityData*)self->data;
-
-	if (!gfc_vector3d_compare(self->position, self->thinkPos)) return 1;
 
 	if (gfc_input_command_down("panup"))
 	{
@@ -121,27 +121,38 @@ int player_think(Entity* self)
 		level = level_get_the();
 		self->thinkPos.x = self->position.x - move.x * level->tileDim;
 		self->thinkPos.y = self->position.y - move.y * level->tileDim;
-		tile = coords_to_tile(level, self->thinkPos.x, self->thinkPos.y);
-		idx = level_get_tile_index(level, tile.x, tile.y);
-		if (tile.x == -1 || !level->tileMap[idx] || level->entityMap[idx] ||
+		tile = level_coords_to_tile(level, self->thinkPos);
+		idx_new = level_get_tile_index(level, tile.x, tile.y);
+		if (tile.x == -1 || !level->tileMap[idx_new] ||
+			(level->entityMap[idx_new] && level->entityMap[idx_new]->team) ||
 			(move.x != 0 && move.y != 0 && (
 			!level->tileMap[level_get_tile_index(level, tile.x + move.x, tile.y)] ||
 			!level->tileMap[level_get_tile_index(level, tile.x, tile.y + move.y)]
 		))) {
 			self->thinkPos = self->position;
-			return 1;
+			return 0;
 		}
-		tile = coords_to_tile(level, self->position.x, self->position.y);
-		level->entityMap[level_get_tile_index(level, tile.x, tile.y)] = NULL;
-		level->entityMap[idx] = self;
+		self->thinkPosTile = tile;
+		tile = level_coords_to_tile(level, self->position);
+		idx_old = level_get_tile_index(level, tile.x, tile.y);
+		if (level->entityMap[idx_new] && !level->entityMap[idx_new]->team)
+		{
+			level->entityMap[idx_new]->thinkPos = self->position;
+			level->entityMap[idx_new]->thinkPosTile = tile;
+			level->entityMap[idx_new]->dir = gfc_vector3d(move.x * -1, move.y * -1, move.z);
+			level->entityMap[idx_new]->velocity = move;
+			level->entityMap[idx_old] = level->entityMap[idx_new];
+		}
+		else level->entityMap[idx_old] = NULL;
+		level->entityMap[idx_new] = self;
 		self->dir = move;
 		//gfc_vector3d_normalize(&move);
 		move.x /= -1;
 		move.y /= -1;
 		self->velocity = move;
+		return 1;
 	}
-
-	return 1;
+	return 0;
 }
 
 int player_update(Entity* self)

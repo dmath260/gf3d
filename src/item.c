@@ -7,7 +7,7 @@
 
 int item_think(Entity* self)
 {
-	if (!self) return;
+	if (!self) return 0;
 	if (entity_collision_other(self, player_get_the()))
 	{
 		//self->scale.x += 0.0005;

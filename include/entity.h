@@ -8,7 +8,9 @@ typedef struct Entity_S
 	Uint8 _inuse;
 	Model* model;
 	GFC_Vector3D position;
+	GFC_Vector2D positionTile;
 	GFC_Vector3D thinkPos;
+	GFC_Vector2D thinkPosTile;
 	GFC_Vector3D rotation;
 	GFC_Vector3D scale;
 	GFC_Matrix4 mat;

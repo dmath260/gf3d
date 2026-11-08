@@ -123,13 +123,15 @@ Level* level_load(const char* filename)
 		level->wall = model_load(str);
 		if (level->wall) gfc_line_cpy(level->wallFile, str);
 	}
-	sj_object_get_int(data, "tileDim", &level->tileDim);
+	sj_object_get_uint8(data, "tileDim", &level->tileDim);
 	if (!level->tileDim)
 	{
 		level_free(level);
 		sj_free(json);
 		return NULL;
 	}
+	sj_object_get_uint8(data, "lightRange", &level->lightRange);
+	if (!level->lightRange) level->lightRange = 2;
 
 	rows = sj_object_get_value(data, "tilemap");
 	level->tileSize.y = sj_array_count(rows);
@@ -284,10 +286,61 @@ Sint32 level_get_tile_index(Level *level, Uint16 x, Uint16 y)
 	return ((y * level->tileSize.x) + x);
 }
 
-GFC_Vector2D coords_to_tile(Level *level, float x, float y)
+GFC_Vector2D level_coords_to_tile(Level *level, GFC_Vector3D pos)
 {
 	if (!level || !level->tileMap) return gfc_vector2d(-1,-1);
-	if (x >= level->tileSize.x * level->tileDim) return gfc_vector2d(-1, -1);
-	if (y >= level->tileSize.y * level->tileDim) return gfc_vector2d(-1, -1);
-	return gfc_vector2d(floor(x / level->tileDim), floor(y / level->tileDim));
+	if (pos.x >= level->tileSize.x * level->tileDim) return gfc_vector2d(-1, -1);
+	if (pos.y >= level->tileSize.y * level->tileDim) return gfc_vector2d(-1, -1);
+	return gfc_vector2d(floor(pos.x / level->tileDim), floor(pos.y / level->tileDim));
+}
+
+Uint8 level_is_tile_free(Level* level, GFC_Vector2D tile)
+{
+	Sint32 idx;
+	if (!level) return 0;
+	idx = level_get_tile_index(level, tile.x, tile.y);
+	if (idx == -1) return 0;
+	if (!level->tileMap[idx] || level->entityMap[idx]) return 0;
+	return 1;
+}
+
+GFC_Rect level_get_room_bounds(Level* level, GFC_Vector3D pos)
+{
+	GFC_Rect bounds;
+	GFC_Vector2D pos_tile;
+	Sint32 idx, d;
+	Uint8 r;
+	if (!level || !level->tileMap) return gfc_rect(-1, -1, -1, -1);
+	pos_tile = level_coords_to_tile(level, pos);
+	if (pos_tile.x == -1) return gfc_rect(-1, -1, -1, -1);
+	bounds = gfc_rect(pos_tile.x, pos_tile.y, pos_tile.x, pos_tile.y);
+	idx = level_get_tile_index(level, pos_tile.x, pos_tile.y);
+	if (idx == -1) return gfc_rect(-1, -1, -1, -1);
+	r = level->tileMap[idx];
+	if (r < 2) return gfc_rect(-1, -1, -1, -1);
+	for (d = pos_tile.x - 1; d >= 0; d--)
+	{
+		if (level->tileMap[idx - 1] != r) break;
+		bounds.x = d;
+		idx--;
+	}
+	for (d = pos_tile.x + 1; d < level->tileSize.x; d++)
+	{
+		if (level->tileMap[idx + 1] != r) break;
+		bounds.w = d;
+		idx++;
+	}
+	for (d = pos_tile.y - 1; d >= 0; d--)
+	{
+		if (level->tileMap[idx - level->tileSize.x] != r) break;
+		bounds.y = d;
+		idx -= level->tileSize.x;
+	}
+	for (d = pos_tile.y + 1; d < level->tileSize.y; d++)
+	{
+		if (level->tileMap[idx + level->tileSize.x] != r) break;
+		bounds.h = d;
+		idx += level->tileSize.x;
+	}
+	return bounds;
 }

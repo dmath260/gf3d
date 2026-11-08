@@ -4,11 +4,12 @@
     "_terrain": "models/terrain.model",
     "tile": "models/tile.model",
     "wall": "models/wall.model",
-    "music": "sounds/music/sound_00.wav",
+    "_music": "sounds/music/sound_00.wav",
     "bounds": {
       "m": [ 0, 0, -20 ],
       "s": [ 896, 512, 40 ]
     },
+    "lightRange": 4,
     "tileDim": 16,
     "tilemap": [
       [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],

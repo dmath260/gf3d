@@ -261,6 +261,9 @@
     <ClInclude Include="..\include\turn.h">
       <Filter>Header Files\pmd</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\battle.h">
+      <Filter>Header Files\pmd</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\gfc\simple_logger\src\simple_logger.c">
@@ -440,6 +443,9 @@
     <ClCompile Include="..\src\turn.c">
       <Filter>Source Files\pmd</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\battle.c">
+      <Filter>Source Files\pmd</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\shaders\sprite.frag">
@@ -552,6 +558,12 @@
     </None>
     <None Include="..\models\0418\0418f.model">
       <Filter>Resource Files\Models\Pokemon</Filter>
+    </None>
+    <None Include="..\defs\move.json">
+      <Filter>Resource Files\Defs</Filter>
+    </None>
+    <None Include="..\defs\type.json">
+      <Filter>Resource Files\Defs</Filter>
     </None>
   </ItemGroup>
 </Project>

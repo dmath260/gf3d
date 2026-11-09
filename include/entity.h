@@ -2,11 +2,13 @@
 #define __ENTITY_H__
 
 #include "model.h"
+#include "battle.h"
 
 typedef struct Entity_S
 {
 	Uint8 _inuse;
 	Model* model;
+	GFC_TextWord name;
 	GFC_Vector3D position;
 	GFC_Vector2D positionTile;
 	GFC_Vector3D thinkPos;
@@ -22,6 +24,16 @@ typedef struct Entity_S
 	GFC_Color colorMod;
 
 	Uint8 team;
+	BattleType type1;
+	BattleType type2;
+	int hp;
+	int maxHP;
+	Uint8 attack;
+	Uint8 defense;
+	Uint8 specialAttack;
+	Uint8 specialDefense;
+	BattleMove *moves[4];
+	Uint8 currentPP[4];
 
 	int (*think)(struct Entity_S *self);
 	int (*update)(struct Entity_S* self);

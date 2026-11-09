@@ -1,5 +1,5 @@
 {
-  "items": [
+  "pokemon": [
     {
       "name": "Pikachu (M)",
       "model": "models/0025/0025.model",
@@ -20,13 +20,13 @@
         2,
         2
       ],
-      "stats": [
-        47,
-        21,
-        18,
-        21,
-        18
-      ],
+      "type1": "Electric",
+      "type2": "None",
+      "hp": 47,
+      "attack": 21,
+      "defense": 18,
+      "specialAttack": 21,
+      "specialDefense": 18,
       "moves": [
         "Growl",
         "Thunder Shock",
@@ -54,13 +54,13 @@
         2,
         2
       ],
-      "stats": [
-        47,
-        21,
-        18,
-        21,
-        18
-      ],
+      "type1": "Electric",
+      "type2": "None",
+      "hp": 47,
+      "attack": 21,
+      "defense": 18,
+      "specialAttack": 21,
+      "specialDefense": 18,
       "moves": [
         "Growl",
         "Thunder Shock",
@@ -88,13 +88,13 @@
         2,
         2
       ],
-      "stats": [
-        47,
-        21,
-        21,
-        22,
-        21
-      ],
+      "type1": "Grass",
+      "type2": "None",
+      "hp": 47,
+      "attack": 21,
+      "defense": 21,
+      "specialAttack": 22,
+      "specialDefense": 21,
       "moves": [
         "Leer",
         "Pound",
@@ -122,13 +122,13 @@
         2,
         2
       ],
-      "stats": [
-        52,
-        22,
-        21,
-        22,
-        21
-      ],
+      "type1": "Fire",
+      "type2": "None",
+      "hp": 52,
+      "attack": 22,
+      "defense": 21,
+      "specialAttack": 22,
+      "specialDefense": 21,
       "moves": [
         "Growl",
         "Scratch",
@@ -156,13 +156,13 @@
         2,
         2
       ],
-      "stats": [
-        53,
-        18,
-        17,
-        18,
-        17
-      ],
+      "type1": "Water",
+      "type2": "None",
+      "hp": 53,
+      "attack": 18,
+      "defense": 17,
+      "specialAttack": 18,
+      "specialDefense": 17,
       "moves": [
         "Growl",
         "Tackle",
@@ -190,13 +190,13 @@
         2,
         2
       ],
-      "stats": [
-        54,
-        22,
-        21,
-        22,
-        21
-      ],
+      "type1": "Normal",
+      "type2": "None",
+      "hp": 54,
+      "attack": 22,
+      "defense": 21,
+      "specialAttack": 22,
+      "specialDefense": 21,
       "moves": [
         "Growl",
         "Tackle",
@@ -224,13 +224,13 @@
         2,
         2
       ],
-      "stats": [
-        42,
-        23,
-        21,
-        23,
-        21
-      ],
+      "type1": "Grass",
+      "type2": "None",
+      "hp": 42,
+      "attack": 23,
+      "defense": 21,
+      "specialAttack": 23,
+      "specialDefense": 21,
       "moves": [
         "Tackle",
         "Withdraw",
@@ -258,13 +258,13 @@
         2,
         2
       ],
-      "stats": [
-        49,
-        22,
-        21,
-        22,
-        23
-      ],
+      "type1": "Fire",
+      "type2": "None",
+      "hp": 49,
+      "attack": 22,
+      "defense": 21,
+      "specialAttack": 22,
+      "specialDefense": 23,
       "moves": [
         "Leer",
         "Scratch",
@@ -292,13 +292,13 @@
         2,
         2
       ],
-      "stats": [
-        50,
-        21,
-        19,
-        22,
-        18
-      ],
+      "type1": "Water",
+      "type2": "None",
+      "hp": 50,
+      "attack": 21,
+      "defense": 19,
+      "specialAttack": 22,
+      "specialDefense": 18,
       "moves": [
         "Pound",
         "Growl",
@@ -326,13 +326,13 @@
         2,
         2
       ],
-      "stats": [
-        48,
-        17,
-        17,
-        17,
-        17
-      ],
+      "type1": "Normal",
+      "type2": "None",
+      "hp": 48,
+      "attack": 17,
+      "defense": 17,
+      "specialAttack": 17,
+      "specialDefense": 17,
       "moves": [
         "Tackle",
         "Growl",
@@ -360,13 +360,13 @@
         2,
         2
       ],
-      "stats": [
-        48,
-        20,
-        20,
-        20,
-        20
-      ],
+      "type1": "Electric",
+      "type2": "None",
+      "hp": 48,
+      "attack": 20,
+      "defense": 20,
+      "specialAttack": 20,
+      "specialDefense": 20,
       "moves": [
         "Tackle",
         "Leer",
@@ -394,13 +394,13 @@
         1.5,
         1.5
       ],
-      "stats": [
-        52,
-        25,
-        16,
-        23,
-        16
-      ],
+      "type1": "Water",
+      "type2": "None",
+      "hp": 52,
+      "attack": 25,
+      "defense": 16,
+      "specialAttack": 23,
+      "specialDefense": 16,
       "moves": [
         "Growl",
         "Quick Attack",
@@ -428,13 +428,13 @@
         1.5,
         1.5
       ],
-      "stats": [
-        52,
-        25,
-        16,
-        23,
-        16
-      ],
+      "type1": "Water",
+      "type2": "None",
+      "hp": 52,
+      "attack": 25,
+      "defense": 16,
+      "specialAttack": 23,
+      "specialDefense": 16,
       "moves": [
         "Growl",
         "Quick Attack",

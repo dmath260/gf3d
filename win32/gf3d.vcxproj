@@ -49,6 +49,7 @@
     <ClInclude Include="..\gfc\simple_json\include\simple_json_types.h" />
     <ClInclude Include="..\gfc\simple_json\include\simple_json_value.h" />
     <ClInclude Include="..\gfc\simple_logger\include\simple_logger.h" />
+    <ClInclude Include="..\include\battle.h" />
     <ClInclude Include="..\include\draw_3d.h" />
     <ClInclude Include="..\include\entity.h" />
     <ClInclude Include="..\include\gf2d_actor.h" />
@@ -110,6 +111,7 @@
     <ClCompile Include="..\gfc\src\gfc_types.c" />
     <ClCompile Include="..\gfc\src\gfc_vector.c" />
     <ClCompile Include="..\gfc\src\miniz.c" />
+    <ClCompile Include="..\src\battle.c" />
     <ClCompile Include="..\src\draw_3d.c" />
     <ClCompile Include="..\src\entity.c" />
     <ClCompile Include="..\src\game.c" />
@@ -150,7 +152,9 @@
     <None Include="..\config\overlay_pipeline.cfg" />
     <None Include="..\config\sky_pipeline.cfg" />
     <None Include="..\defs\item.json" />
+    <None Include="..\defs\move.json" />
     <None Include="..\defs\pokemon.json" />
+    <None Include="..\defs\type.json" />
     <None Include="..\levels\testlevel.json" />
     <None Include="..\models\0025\0025.model" />
     <None Include="..\models\0025\0025f.model" />

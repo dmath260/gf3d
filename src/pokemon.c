@@ -7,6 +7,7 @@
 #include "pokemon.h"
 #include "player.h"
 #include "turn.h"
+#include "battle.h"
 
 int pokemon_think(Entity* self);
 void pokemon_free(Entity* self);
@@ -15,12 +16,14 @@ Entity* pokemon_spawn(GFC_Vector3D position, const char* pokemonName, Uint8 team
 {
 	Entity* self;
 	Level* level;
-	SJson* pokemonDef;
+	SJson* pokemonDef, *moves, *moveName;
 	const char* str;
 	GFC_Vector2D tile = {0};
 	GFC_Vector3D scale;
+	int count, i;
+	BattleMove* moveData;
 	if (!pokemonName) return NULL;
-	pokemonDef = gfc_config_def_get_by_name("items", pokemonName);
+	pokemonDef = gfc_config_def_get_by_name("pokemon", pokemonName);
 	if (!pokemonDef)
 	{
 		slog("cannot load pokemon %s", pokemonName);
@@ -29,6 +32,7 @@ Entity* pokemon_spawn(GFC_Vector3D position, const char* pokemonName, Uint8 team
 
 	self = entity_new();
 	if (!self) return NULL;
+	gfc_word_cpy(self->name, pokemonName);
 
 	str = sj_object_get_string(pokemonDef, "model");
 	if (str) self->model = model_load(str);
@@ -50,9 +54,45 @@ Entity* pokemon_spawn(GFC_Vector3D position, const char* pokemonName, Uint8 team
 	self->scale = scale;
 	self->rotation.z = GFC_PI;
 
+	str = sj_object_get_string(pokemonDef, "type1");
+	self->type1 = battle_type_to_enum(str);
+	str = sj_object_get_string(pokemonDef, "type2");
+	self->type2 = battle_type_to_enum(str);
+
+	sj_object_get_int(pokemonDef, "hp", &self->maxHP);
+	self->hp = self->maxHP;
+	sj_object_get_uint8(pokemonDef, "attack", &self->attack);
+	sj_object_get_uint8(pokemonDef, "defense", &self->defense);
+	sj_object_get_uint8(pokemonDef, "specialAttack", &self->specialAttack);
+	sj_object_get_uint8(pokemonDef, "specialDefense", &self->specialDefense);
+
+	moves = sj_object_get_value(pokemonDef, "moves");
+	if (sj_is_array(moves))
+	{
+		count = sj_array_count(moves);
+		if (count > 4) count = 4;
+		for (i = 0; i < count; i++)
+		{
+			moveName = sj_array_get_nth(moves, i);
+			moveData = battle_get_move(sj_get_string_value(moveName));
+			if (moveData)
+			{
+				self->moves[i] = moveData;
+				self->currentPP[i] = moveData->maxPP;
+			}
+		}
+	}
+
 	self->think = pokemon_think;
 	self->free = pokemon_free;
 	turn_order_add(self);
+
+	slog("%s:", self->name);
+	for (i = 0; i < 4; i++)
+	{
+		if (self->moves[i]) slog("Move %i: %s", i, self->moves[i]->name);
+		else slog("Move %i: undefined", i);
+	}
 
 	return self;
 }
@@ -199,11 +239,6 @@ Uint8 pokemon_step_towards_npc(Entity* self, Uint8 team)
 	return 1;
 }
 
-Uint8 pokemon_step_towards_room_exit(Entity* self)
-{
-
-}
-
 int pokemon_ally_think(Entity* self)
 {
 	Entity* player;
@@ -212,6 +247,7 @@ int pokemon_ally_think(Entity* self)
 	if (pokemon_step_towards_player(self)) return 1;
 	if (pokemon_step_towards_npc(self, 1)) return 1;
 	if (pokemon_step_towards_npc(self, 0)) return 1;
+	// add additional movement code here
 	return 1;
 }
 
@@ -221,6 +257,7 @@ int pokemon_enemy_think(Entity* self)
 	if (!self) return 0;
 	player = player_get_the();
 	if (pokemon_step_towards_npc(self, 0)) return 1;
+	// add additional movement code here
 	return 1;
 }
 

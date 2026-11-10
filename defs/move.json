@@ -44,7 +44,11 @@
       "_range": "User",
       "target": "User",
       "_cutsCorners": "No",
-      "userDef": 1
+      "statChange": {
+        "stat": "Defense",
+        "statChange": 1,
+        "target": "User"
+      }
     },
     {
       "name": "Tail Whip",
@@ -56,7 +60,11 @@
       "_range": "Front",
       "target": "Enemy",
       "_cutsCorners": "No",
-      "targetDef": -1
+      "statChange": {
+        "stat": "Defense",
+        "statChange": -1,
+        "target": "Enemy"
+      }
     },
     {
       "name": "Charge",
@@ -68,7 +76,11 @@
       "_range": "User",
       "target": "User",
       "_cutsCorners": "No",
-      "userSpD": 1
+      "statChange": {
+        "stat": "Special Defense",
+        "statChange": 1,
+        "target": "User"
+      }
     },
     {
       "name": "Absorb",
@@ -157,7 +169,12 @@
       "accuracy": 0.84,
       "_range": "Front",
       "target": "Enemy",
-      "_cutsCorners": "No"
+      "_cutsCorners": "No",
+      "statChange": {
+        "stat": "Accuracy",
+        "statChange": -1,
+        "target": "Enemy"
+      }
     },
     {
       "name": "Growl",
@@ -169,7 +186,11 @@
       "_range": "Entire Room",
       "target": "Enemy",
       "_cutsCorners": "Yes",
-      "targetAtk": -1
+      "statChange": {
+        "stat": "Attack",
+        "statChange": -1,
+        "target": "Enemy"
+      }
     },
     {
       "name": "Leer",
@@ -181,7 +202,11 @@
       "_range": "Front",
       "target": "Enemy",
       "_cutsCorners": "No",
-      "targetDef": -1
+      "statChange": {
+        "stat": "Defense",
+        "statChange": -1,
+        "target": "Enemy"
+      }
     },
     {
       "name": "Fake Out",
@@ -250,7 +275,11 @@
       "_range": "User",
       "target": "User",
       "_cutsCorners": "No",
-      "userDef": 1
+      "statChange": {
+        "stat": "Defense",
+        "statChange": 1,
+        "target": "User"
+      }
     },
     {
       "name": "Water Gun",

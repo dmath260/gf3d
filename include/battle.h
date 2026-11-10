@@ -43,6 +43,24 @@ typedef enum
 	BTG_ERROR // invalid only
 } BattleTarget;
 
+typedef enum
+{
+	BS_ATTACK,
+	BS_DEFENSE,
+	BS_ACCURACY,
+	BS_EVASIVENESS,
+	BS_SPECIALATTACK,
+	BS_SPECIALDEFENSE,
+	BS_ERROR
+} BattleStat;
+
+typedef struct
+{
+	BattleStat stat;
+	Sint8 statChange;
+	BattleTarget target;
+} BattleStatChanges;
+
 typedef struct
 {
 	GFC_TextWord name;
@@ -56,6 +74,7 @@ typedef struct
 	// cuts corners (boolean)
 	// secondary effect rate (float)
 	Uint8 criticalHitRate;
+	BattleStatChanges *statChanges; // one for now, change if adding moves w/ multiple
 }BattleMove;
 
 /**

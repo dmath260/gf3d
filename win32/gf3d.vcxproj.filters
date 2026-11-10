@@ -565,5 +565,8 @@
     <None Include="..\defs\type.json">
       <Filter>Resource Files\Defs</Filter>
     </None>
+    <None Include="..\defs\stat.json">
+      <Filter>Resource Files\Defs</Filter>
+    </None>
   </ItemGroup>
 </Project>

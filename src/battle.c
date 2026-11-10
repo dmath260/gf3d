@@ -4,41 +4,46 @@
 #include "gfc_config_def.h"
 
 #include "battle.h"
-
-typedef struct
-{
-	int* typeChart;
-}TypeManager;
+#include "entity.h"
 
 typedef struct
 {
 	BattleMove* moveList;
 	Uint16 maxMoves;
-}MoveManager;
+	int* typeChart;
+	int* statChart;
+}BattleManager;
 
 Uint8 battle_type_chart_populate();
+Uint8 battle_stat_chart_populate();
 void battle_close(void);
 
-TypeManager type_manager = {0};
-MoveManager move_manager = {0};
+BattleManager battle_manager = {0};
 
 void battle_init()
 {
-	type_manager.typeChart = gfc_allocate_array(sizeof(int), BT_TOTAL * BT_TOTAL);
+	battle_manager.typeChart = gfc_allocate_array(sizeof(int), BT_TOTAL * BT_TOTAL);
+	battle_manager.statChart = gfc_allocate_array(sizeof(int), 84);
 	if (!battle_type_chart_populate())
 	{
 		slog("Failed to initialize battle system: type chart not loaded properly");
 		battle_close();
 		return;
 	}
-	move_manager.maxMoves = gfc_config_def_get_resource_count("moves");
-	if (!move_manager.maxMoves)
+	if (!battle_stat_chart_populate())
+	{
+		slog("Failed to initialize battle system: stat chart not loaded properly");
+		battle_close();
+		return;
+	}
+	battle_manager.maxMoves = gfc_config_def_get_resource_count("moves");
+	if (!battle_manager.maxMoves)
 	{
 		slog("Failed to initialize battle system: moves not loaded");
 		battle_close();
 		return;
 	}
-	move_manager.moveList = gfc_allocate_array(
+	battle_manager.moveList = gfc_allocate_array(
 		sizeof(BattleMove),
 		gfc_config_def_get_resource_count("moves")
 	);
@@ -50,15 +55,12 @@ Uint8 battle_type_chart_populate()
 	SJson* typeDef, *rows, *col, *cell;
 	int i, j;
 	typeDef = gfc_config_def_get_by_name("types", "typeChart");
-	slog("A");
-	if (!typeDef || !type_manager.typeChart) return 0;
+	if (!typeDef || !battle_manager.typeChart) return 0;
 
 	rows = sj_object_get_value(typeDef, "typeChart");
-	slog("B");
 	if (sj_array_count(rows) != BT_TOTAL) return 0;
 
 	col = sj_array_nth(rows, 0);
-	slog("C");
 	if (sj_array_count(col) != BT_TOTAL) return 0;
 
 	for (j = 0; j < BT_TOTAL; j++)
@@ -69,11 +71,38 @@ Uint8 battle_type_chart_populate()
 		{
 			cell = sj_array_get_nth(col, i);
 			if (!cell) continue;
-			sj_get_integer_value(cell, &type_manager.typeChart[i + j * BT_TOTAL]);
+			sj_get_integer_value(cell, &battle_manager.typeChart[i + j * BT_TOTAL]);
 		}
 	}
 
-	slog("D");
+	return 1;
+}
+
+Uint8 battle_stat_chart_populate()
+{
+	SJson* statDef, *rows, *col, *cell;
+	int i, j;
+	statDef = gfc_config_def_get_by_name("stats", "statChart");
+	if (!statDef || !battle_manager.statChart) return 0;
+
+	rows = sj_object_get_value(statDef, "statChart");
+	if (sj_array_count(rows) != 4) return 0;
+
+	col = sj_array_nth(rows, 0);
+	if (sj_array_count(col) != 21) return 0;
+
+	for (j = 0; j < 4; j++)
+	{
+		col = sj_array_get_nth(rows, j);
+		if (!col) continue;
+		for (i = 0; i < 21; i++)
+		{
+			cell = sj_array_get_nth(col, i);
+			if (!cell) continue;
+			sj_get_integer_value(cell, &battle_manager.typeChart[i + j * 21]);
+		}
+	}
+
 	return 1;
 }
 
@@ -121,18 +150,46 @@ BattleTarget battle_target_to_enum(const char* target)
 	return BTG_ERROR;
 }
 
+BattleStat battle_stat_to_enum(const char* stat)
+{
+	// somewhat less ugly
+	if (!stat) return BS_ERROR;
+	if (!gfc_stricmp(stat, "Attack")) return BS_ATTACK;
+	if (!gfc_stricmp(stat, "Defense")) return BS_DEFENSE;
+	if (!gfc_stricmp(stat, "Accuracy")) return BS_ACCURACY;
+	if (!gfc_stricmp(stat, "Evasiveness")) return BS_EVASIVENESS;
+	if (!gfc_stricmp(stat, "Special Attack")) return BS_SPECIALATTACK;
+	if (!gfc_stricmp(stat, "Special Defense")) return BS_SPECIALDEFENSE;
+	return BS_ERROR;
+}
+
+const char *battle_enum_to_stat(BattleStat stat)
+{
+	if (!stat) return "{error}";
+	switch (stat)
+	{
+		case BS_ATTACK: return "Attack";
+		case BS_DEFENSE: return "Defense";
+		case BS_ACCURACY: return "Accuracy";
+		case BS_EVASIVENESS: return "Evasiveness";
+		case BS_SPECIALATTACK: return "Special Attack";
+		case BS_SPECIALDEFENSE: return "Special Defense";
+		default: return "{error}";
+	}
+}
+
 BattleMove* battle_new_move()
 {
 	int i;
-	if (!move_manager.moveList) return NULL;
-	for (i = 0; i < move_manager.maxMoves; i++)
+	if (!battle_manager.moveList) return NULL;
+	for (i = 0; i < battle_manager.maxMoves; i++)
 	{
-		if (move_manager.moveList[i].maxPP) continue; // never 0 for a valid move
+		if (battle_manager.moveList[i].maxPP) continue; // never 0 for a valid move
 
 		// ANY BOILERPLATE CODE GOES HERE
-		move_manager.moveList[i].criticalHitRate = 8;
+		battle_manager.moveList[i].criticalHitRate = 8;
 
-		return &move_manager.moveList[i];
+		return &battle_manager.moveList[i];
 	}
 	return NULL;
 }
@@ -140,14 +197,17 @@ BattleMove* battle_new_move()
 void battle_delete_move(BattleMove* move)
 {
 	if (!move) return;
+	if (move->statChanges) memset(move->statChanges, 0, sizeof(BattleStatChanges));
 	memset(move, 0, sizeof(BattleMove));
 }
 
 BattleMove* battle_load_move(const char* name)
 {
-	SJson* moveDef;
+	SJson* moveDef, *stat;
 	BattleMove* move;
+	BattleStatChanges* changes;
 	Uint8 i;
+	int j;
 	const char* str;
 	if (!name) return NULL;
 	move = battle_new_move();
@@ -202,6 +262,27 @@ BattleMove* battle_load_move(const char* name)
 	}
 	if (sj_object_get_uint8(moveDef, "criticalHitRate", &i)) move->criticalHitRate = i;
 
+	stat = sj_object_get_value(moveDef, "statChange");
+	if (stat)
+	{
+		changes = gfc_allocate_array(sizeof(BattleStatChanges), 1);
+		str = sj_object_get_string(stat, "stat");
+		changes->stat = battle_stat_to_enum(str);
+		str = sj_object_get_string(stat, "target");
+		changes->target = battle_target_to_enum(str);
+		if (sj_object_get_int(stat, "statChange", &j) && changes->stat != BS_ERROR &&
+			changes->target != BTG_ERROR)
+		{
+			changes->statChange = i;
+			move->statChanges = changes;
+		}
+		else
+		{
+			slog("Invalid stat data found");
+			memset(changes, 0, sizeof(BattleStatChanges));
+		}
+	}
+
 	return move;
 }
 
@@ -209,27 +290,145 @@ BattleMove* battle_get_move(const char* name)
 {
 	Uint16 i;
 	if (!name) return NULL;
-	for (i = 0; i < move_manager.maxMoves; i++)
+	for (i = 0; i < battle_manager.maxMoves; i++)
 	{
-		if (!move_manager.moveList[i].maxPP) continue;
-		if (!gfc_stricmp(name, move_manager.moveList[i].name))
-			return &move_manager.moveList[i];
+		if (!battle_manager.moveList[i].maxPP) continue;
+		if (!gfc_stricmp(name, battle_manager.moveList[i].name))
+			return &battle_manager.moveList[i];
 	}
 	return battle_load_move(name);
+}
+
+float battle_type_matchup(BattleMove* move, Entity* target)
+{
+	float effectiveness, type1, type2;
+	if (!move || !target) return 0.0;
+	type1 = battle_manager.typeChart[move->type * BT_TOTAL + target->type1];
+	type2 = battle_manager.typeChart[move->type * BT_TOTAL + target->type2];
+	effectiveness = type1 * type2 / 65536.0;
+	if (effectiveness <= 0.55) slog("It has little effect...");
+	else if (effectiveness <= 0.95) slog("It's not very effective...");
+	else if (effectiveness > 1.05) slog("It's super effective!");
+	return effectiveness;
+}
+
+float battle_get_stat_mod(Entity *user, BattleStat stat)
+{
+	if (!user || stat == BS_ERROR) return 0.0;
+	return (float)(battle_manager.statChart[user->statChanges[stat] + 21 * (stat % 4)]) / 256;
+}
+
+void battle_use_move(Entity* user, Entity* target, Uint8 moveIndex)
+{
+	BattleMove* move;
+	float baseDamage, mult, atk, def, pow, logInt, acc, atkMod, defMod;
+	Uint16 finalDamage;
+	Entity* statTarget;
+	const char* str;
+	if (!user || moveIndex > 3)
+	{
+		slog("The move failed!");
+		return;
+	}
+	move = user->moves[moveIndex];
+	if (!move || move->target == BTG_ERROR || move->category == BC_ERROR || !move->maxPP)
+	{
+		slog("The move failed!");
+		return;
+	}
+	slog("%s used %s!", target->name, move->name);
+	if ((move->target == BTG_ENEMY || move->target == BTG_ALL) && !target)
+	{
+		slog("The move failed!");
+		return;
+	}
+	if (move->target == BTG_ENEMY && target->team == user->team)
+	{
+		slog("The move failed!");
+		return;
+	}
+	if (move->category == BC_PHYSICAL)
+	{
+		atkMod = battle_get_stat_mod(user, BS_ATTACK);
+		defMod = battle_get_stat_mod(user, BS_DEFENSE);
+		atk = user->attack * atkMod;
+		def = target->defense * defMod;
+	}
+	else if (move->category == BC_SPECIAL)
+	{
+		atkMod = battle_get_stat_mod(user, BS_SPECIALATTACK);
+		defMod = battle_get_stat_mod(user, BS_SPECIALDEFENSE);
+		atk = user->specialAttack * atkMod;
+		def = target->specialDefense * defMod;
+	}
+	acc = move->accuracy * battle_get_stat_mod(user, BS_ACCURACY);
+	acc *= battle_get_stat_mod(user, BS_EVASIVENESS);
+	pow = move->power;
+	mult = 1.0;
+	if (user->team) mult *= 0.75;
+	if (gfc_random() * 100.0 < move->criticalHitRate)
+	{
+		slog("A critical hit!");
+		mult *= 1.5;
+	}
+	if (move->type == target->type1 || move->type == target->type2) mult *= 1.5;
+	mult *= battle_type_matchup(move, target);
+	atk *= atkMod;
+	def *= defMod;
+	pow *= atkMod;
+	logInt = 10.0 * (user->level + (atk - def) / 8.0) + 500.0;
+	if (logInt < 1.0) logInt = 1.0;
+	else if (logInt > 2047.0) logInt = 2047.0;
+	baseDamage = mult * (153.0 / 256.0) * (atk + pow) - def / 2.0 + 50.0 * log(logInt) - 311.0;
+	finalDamage = round(baseDamage * (1.0 + gfc_crandom() / 8.0));
+	if (gfc_random() < acc)
+	{
+		if (finalDamage > 0)
+		{
+			slog("%s took %i damage!", target->name, finalDamage);
+			target->hp -= finalDamage;
+			if (target->hp <= 0)
+			{
+				if (target->team) slog("%s was defeated!", target->name);
+				else slog("Oh no! %s was defeated!", target->name);
+				entity_free(target);
+				return;
+			}
+		}
+	}
+	else
+	{
+		slog("The move missed %s!", target->name);
+	}
+
+	if (move->statChanges)
+	{
+		if (move->statChanges->target == BTG_USER) statTarget = user;
+		else if (move->statChanges->target == BTG_ENEMY) statTarget = target;
+		if (statTarget)
+		{
+			str = battle_enum_to_stat(move->statChanges->stat);
+			statTarget->statChanges[move->statChanges->stat] += move->statChanges->statChange;
+			if (move->statChanges->statChange > 0)
+				slog("%s's %s rose slightly!", statTarget->name, str);
+			else slog("%s's %s fell slightly!", statTarget->name, str);
+		}
+	}
 }
 
 void battle_close(void)
 {
 	Uint16 i;
-	if (type_manager.typeChart) free(type_manager.typeChart);
-	memset(&type_manager, 0, sizeof(TypeManager));
-	if (move_manager.moveList)
+	if (battle_manager.typeChart) free(battle_manager.typeChart);
+	if (battle_manager.statChart) free(battle_manager.statChart);
+	memset(&battle_manager, 0, sizeof(BattleManager));
+	if (battle_manager.moveList)
 	{
-		for (i = 0; i < move_manager.maxMoves; i++)
+		for (i = 0; i < battle_manager.maxMoves; i++)
 		{
-			battle_delete_move(&move_manager.moveList[i]);
+			battle_delete_move(&battle_manager.moveList[i]);
 		}
-		free(move_manager.moveList);
+		free(battle_manager.moveList);
 	}
-	memset(&move_manager, 0, sizeof(MoveManager));
+	memset(&battle_manager, 0, sizeof(BattleManager));
 }

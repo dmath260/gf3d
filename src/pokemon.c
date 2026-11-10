@@ -59,12 +59,15 @@ Entity* pokemon_spawn(GFC_Vector3D position, const char* pokemonName, Uint8 team
 	str = sj_object_get_string(pokemonDef, "type2");
 	self->type2 = battle_type_to_enum(str);
 
+	self->level = 10; // change all this when adding level-up stuff
 	sj_object_get_int(pokemonDef, "hp", &self->maxHP);
 	self->hp = self->maxHP;
 	sj_object_get_uint8(pokemonDef, "attack", &self->attack);
 	sj_object_get_uint8(pokemonDef, "defense", &self->defense);
 	sj_object_get_uint8(pokemonDef, "specialAttack", &self->specialAttack);
 	sj_object_get_uint8(pokemonDef, "specialDefense", &self->specialDefense);
+
+	for (i = 0; i < 6; i++) self->statChanges[i] = 10;
 
 	moves = sj_object_get_value(pokemonDef, "moves");
 	if (sj_is_array(moves))

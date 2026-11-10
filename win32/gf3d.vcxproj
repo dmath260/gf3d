@@ -154,6 +154,7 @@
     <None Include="..\defs\item.json" />
     <None Include="..\defs\move.json" />
     <None Include="..\defs\pokemon.json" />
+    <None Include="..\defs\stat.json" />
     <None Include="..\defs\type.json" />
     <None Include="..\levels\testlevel.json" />
     <None Include="..\models\0025\0025.model" />

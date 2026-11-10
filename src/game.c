@@ -68,6 +68,7 @@ int main(int argc,char *argv[])
     gfc_config_def_load("defs/pokemon.json");
     gfc_config_def_load("defs/move.json");
     gfc_config_def_load("defs/type.json");
+    gfc_config_def_load("defs/stat.json");
     entity_init(1000);
     turn_init(5, 20, 1000);
     battle_init();

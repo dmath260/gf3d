@@ -26,12 +26,14 @@ typedef struct Entity_S
 	Uint8 team;
 	BattleType type1;
 	BattleType type2;
+	Uint8 level;
 	int hp;
 	int maxHP;
 	Uint8 attack;
 	Uint8 defense;
 	Uint8 specialAttack;
 	Uint8 specialDefense;
+	Uint8 statChanges[6]; // Atk, Def, Acc, Eva, SpA, SpD
 	BattleMove *moves[4];
 	Uint8 currentPP[4];
 

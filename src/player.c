@@ -7,8 +7,10 @@
 #include "player.h"
 #include "level.h"
 #include "turn.h"
+#include "battle.h"
 
 static Entity* thePlayer = NULL;
+Uint32 swapFrame = 0;
 
 typedef struct
 {
@@ -53,9 +55,23 @@ Entity* player_spawn(GFC_Vector3D position, const char* pokemonName)
 	}
 	self->data = data;
 	thePlayer = self;
-	turn_set_player(self);
+	swapFrame = SDL_GetTicks();
+	turn_set_player(self, 1);
 
 	return self;
+}
+
+void player_set(Entity* self)
+{
+	if (!self) return;
+	swapFrame = SDL_GetTicks();
+	self->think = player_think;
+	self->update = player_update;
+	self->free = player_free;
+	self->data = thePlayer->data;
+	pokemon_relegate_player();
+	thePlayer = self;
+	slog("%s set as player", thePlayer->name);
 }
 
 void player_free(Entity* self)
@@ -64,6 +80,12 @@ void player_free(Entity* self)
 	if (!self || !self->data) return;
 	data = (PlayerEntityData*)self->data;
 	// clean up any borrowed resources
+	if (turn_next_player()) // don't free if the player switches
+	{
+		turn_remove(self);
+		return;
+	}
+	turn_remove(self);
 	free(data);
 	thePlayer = NULL;
 	self->data = NULL;
@@ -76,24 +98,65 @@ int player_think(Entity* self)
 	Level* level;
 	GFC_Vector2D tile = {0};
 	int idx_new, idx_old;
+	Entity* target;
 	if (!self || !self->data || turn_anybody_moving()) return 0;
 	data = (PlayerEntityData*)self->data;
+	level = level_get_the();
+	if (gfc_input_command_pressed("switch_player") && SDL_GetTicks() - swapFrame >= 1000)
+	{
+		turn_next_player();
+		return 0;
+	}
+	if (gfc_input_command_down("show_moves"))
+	{
+		//slog("%f %f", self->dir.x, self->dir.y);
+		idx_new = level_get_tile_index(
+			level,
+			self->thinkPosTile.x - self->dir.x,
+			self->thinkPosTile.y - self->dir.y
+		);
+		target = level->entityMap[idx_new];
+		if (gfc_input_command_pressed("pan_up"))
+		{
+			idx_new = 0;
+		}
+		else if (gfc_input_command_pressed("pan_right"))
+		{
+			idx_new = 1;
+		}
+		else if (gfc_input_command_pressed("pan_down"))
+		{
+			idx_new = 2;
+		}
+		else if (gfc_input_command_pressed("pan_left"))
+		{
+			idx_new = 3;
+		}
+		else return 0;
 
-	if (gfc_input_command_down("panup"))
+		if (!self->currentPP[idx_new])
+		{
+			slog("Not enough PP to use %s", self->moves[idx_new]->name);
+			return 0;
+		}
+		battle_use_move(self, target, idx_new);
+		return 1;
+	}
+	if (gfc_input_command_down("pan_up"))
 	{
 		//data->cameraFollowDistance -= 0.1;
 		//data->cameraRotation.y -= 0.05;
 	}
-	if (gfc_input_command_down("pandown"))
+	if (gfc_input_command_down("pan_down"))
 	{
 		//data->cameraFollowDistance += 0.1;
 		//data->cameraRotation.y += 0.05;
 	}
-	if (gfc_input_command_down("panleft"))
+	if (gfc_input_command_down("pan_left"))
 	{
 		//data->cameraRotation.x -= 0.05;
 	}
-	if (gfc_input_command_down("panright"))
+	if (gfc_input_command_down("pan_right"))
 	{
 		//data->cameraRotation.x += 0.05;
 	}
@@ -118,12 +181,13 @@ int player_think(Entity* self)
 	if (move.x || move.y)
 	{
 		self->rotation.z = SDL_atan2f(move.y, move.x) - GFC_PI / 2;
-		level = level_get_the();
+		self->dir = move;
 		self->thinkPos.x = self->position.x - move.x * level->tileDim;
 		self->thinkPos.y = self->position.y - move.y * level->tileDim;
 		tile = level_coords_to_tile(level, self->thinkPos);
 		idx_new = level_get_tile_index(level, tile.x, tile.y);
 		if (tile.x == -1 || !level->tileMap[idx_new] ||
+			gfc_input_command_down("lock_position") ||
 			(level->entityMap[idx_new] && level->entityMap[idx_new]->team) ||
 			(move.x != 0 && move.y != 0 && (
 			!level->tileMap[level_get_tile_index(level, tile.x + move.x, tile.y)] ||
@@ -145,7 +209,6 @@ int player_think(Entity* self)
 		}
 		else level->entityMap[idx_old] = NULL;
 		level->entityMap[idx_new] = self;
-		self->dir = move;
 		//gfc_vector3d_normalize(&move);
 		move.x /= -1;
 		move.y /= -1;

@@ -291,6 +291,17 @@
       "_range": "Front",
       "target": "Enemy",
       "_cutsCorners": "Yes"
+    },
+    {
+      "name": "",
+      "type": "",
+      "category": "Physical",
+      "power": 1,
+      "maxPP": 17,
+      "accuracy": 0.93,
+      "_range": "Front",
+      "target": "Enemy",
+      "_cutsCorners": "No"
     }
   ]
 }

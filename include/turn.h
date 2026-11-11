@@ -48,9 +48,16 @@ void turn_reset();
 /**
 * @brief sets a player to become the current player (first in turn order)
 * @param ent the entity to set as player
+* @param swap 0 to keep current order the same, anything else swaps order
 * @return 1 on success, 0 on failure
 */
-Uint8 turn_set_player(Entity* ent);
+Uint8 turn_set_player(Entity* ent, Uint8 swap);
+
+/**
+* @brief changes the player to the next available player if possible
+* @return 1 on success, 0 on failure (no healthy players left)
+*/
+Uint8 turn_next_player();
 
 /**
 * @brief checks if any entities that can take turns are currently moving

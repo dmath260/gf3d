@@ -50,6 +50,7 @@
     <ClInclude Include="..\gfc\simple_json\include\simple_json_value.h" />
     <ClInclude Include="..\gfc\simple_logger\include\simple_logger.h" />
     <ClInclude Include="..\include\battle.h" />
+    <ClInclude Include="..\include\battle_types.h" />
     <ClInclude Include="..\include\draw_3d.h" />
     <ClInclude Include="..\include\entity.h" />
     <ClInclude Include="..\include\gf2d_actor.h" />
@@ -146,6 +147,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\config\audio.cfg" />
+    <None Include="..\config\font.cfg" />
     <None Include="..\config\highlight_pipeline.cfg" />
     <None Include="..\config\input.cfg" />
     <None Include="..\config\model_pipeline.cfg" />

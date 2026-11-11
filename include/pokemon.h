@@ -11,4 +11,10 @@
 */
 Entity* pokemon_spawn(GFC_Vector3D position, const char* pokemonName, Uint8 team);
 
+/**
+* @brief relegates the player to a regular pokemon
+* @note this means replacing its think/update/free/etc. functions
+*/
+void pokemon_relegate_player();
+
 #endif

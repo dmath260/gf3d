@@ -2,7 +2,7 @@
 #define __ENTITY_H__
 
 #include "model.h"
-#include "battle.h"
+#include "battle_types.h"
 
 typedef struct Entity_S
 {

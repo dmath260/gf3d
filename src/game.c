@@ -50,6 +50,11 @@ int main(int argc,char *argv[])
 {
     //local variables
     Level* level;
+    GFC_TextLine text;
+    Entity* player;
+    Uint8 i;
+    Sprite* textBG;
+    GFC_Color textBGColor;
     //initialization    
     parse_arguments(argc,argv);
     init_logger("gf3d.log",0);
@@ -80,7 +85,12 @@ int main(int argc,char *argv[])
     level = level_load("levels/testlevel.json");
     player_spawn(gfc_vector3d(36, 28, 0), "Mudkip");
     pokemon_spawn(gfc_vector3d(37, 28, 0), "Treecko", 0);
+    //pokemon_spawn(gfc_vector3d(35, 28, 0), "Torchic", 0);
+    //pokemon_spawn(gfc_vector3d(36, 27, 0), "Pikachu (M)", 0);
+    //pokemon_spawn(gfc_vector3d(37, 27, 0), "Skitty", 0);
     pokemon_spawn(gfc_vector3d(36, 4, 0), "Shinx", 1);
+    textBG = gf2d_sprite_load("images/text_bg.png", 200, 160, 1);
+    textBGColor = gfc_color8(0, 0, 64, 255);
 
     // main game loop    
     while(!_done)
@@ -99,17 +109,53 @@ int main(int argc,char *argv[])
 
         // start draw
         gf3d_vgraphics_render_start();
+        player = player_get_the();
 
         // 3D draws
         level_draw(level);
         entity_system_draw();
 
         // 2D draws
-        gf2d_font_draw_line_tag("ALT+F4 to exit",FT_H1,GFC_COLOR_WHITE, gfc_vector2d(10,10));
+        if (player)
+        {
+            snprintf(text, sizeof(GFC_TextLine), "%i/%i HP", player->hp, player->maxHP);
+            gf2d_font_draw_line_tag(text, FT_H1, GFC_COLOR_WHITE, gfc_vector2d(10, 10));
+            if (gfc_input_command_down("show_moves") && !turn_anybody_moving())
+            {
+                gf2d_sprite_draw(
+                    textBG,
+                    gfc_vector2d(540, 280),
+                    NULL,
+                    NULL,
+                    NULL,
+                    NULL,
+                    &textBGColor,
+                    NULL,
+                    0
+                );
+                for (i = 0; i < 4; i++)
+                {
+                    snprintf(
+                        text,
+                        sizeof(GFC_TextLine),
+                        "%s %i/%i PP",
+                        player->moves[i]->name,
+                        player->currentPP[i],
+                        player->moves[i]->maxPP
+                    );
+                    gf2d_font_draw_line_tag(
+                        text,
+                        FT_H6,
+                        GFC_COLOR_WHITE,
+                        gfc_vector2d(550, 292 + 40 * i)
+                    );
+                }
+            }
+        }
         gf2d_mouse_draw();
 
         gf3d_vgraphics_render_end();
-        if (gfc_input_command_down("exit"))_done = 1; // exit condition
+        if (!player || gfc_input_command_down("exit"))_done = 1; // exit condition
         game_frame_delay();
     }    
     vkDeviceWaitIdle(gf3d_vgraphics_get_default_logical_device());    

@@ -1,6 +1,7 @@
 #include "simple_logger.h"
 
 #include "turn.h"
+#include "player.h"
 
 typedef struct
 {
@@ -90,6 +91,12 @@ Uint8 turn_increment(Entity* ent)
 	
 	turn_manager.currentEnt = 0;
 	turn_manager.currentTurn++;
+	for (i = 0; i < turn_manager.maxPlayers; i++)
+	{
+		if (!turn_manager.turnOrder[i] || turn_manager.turnOrder[i]->team) continue;
+		if (turn_manager.turnOrder[i]->hp < turn_manager.turnOrder[i]->maxHP)
+			turn_manager.turnOrder[i]->hp++;
+	}
 	// add code for nearing/reaching max turns here
 	//slog("Turn %i, ent %i", turn_manager.currentTurn, turn_manager.currentEnt);
 	return 1;
@@ -98,7 +105,7 @@ Uint8 turn_increment(Entity* ent)
 Uint8 turn_remove(Entity* ent)
 {
 	int i, j;
-	if (!ent) return 0;
+	if (!ent || !turn_manager.turnOrder) return 0;
 	
 	j = -1;
 	for (i = 0; i < turn_manager.maxEnts; i++)
@@ -119,8 +126,7 @@ Uint8 turn_remove(Entity* ent)
 
 	for (; i < turn_manager.maxEnts; i++)
 	{
-		if (i == turn_manager.maxEnts - 1 || i == turn_manager.maxPlayers - 1 ||
-			!turn_manager.turnOrder[i + 1])
+		if (i == turn_manager.maxEnts - 1 || i == turn_manager.maxPlayers - 1)
 		{
 			turn_manager.turnOrder[i] = NULL;
 			break;
@@ -137,7 +143,7 @@ void turn_reset()
 	turn_manager.currentTurn = 0;
 }
 
-Uint8 turn_set_player(Entity* ent)
+Uint8 turn_set_player(Entity* ent, Uint8 rotate)
 {
 	int i, j;
 	if (!ent || ent->team) return 0;
@@ -153,15 +159,41 @@ Uint8 turn_set_player(Entity* ent)
 
 	if (i == 0)
 	{
-		//slog("Entity is already set as the current player");
 		return 1;
 	}
-	for (j = i; j > 0; j++)
+	if (rotate)
 	{
-		turn_manager.turnOrder[j] = turn_manager.turnOrder[j - 1];
+		for (j = i; j > 0; j--)
+		{
+			turn_manager.turnOrder[j] = turn_manager.turnOrder[j - 1];
+		}
+		turn_manager.turnOrder[0] = ent;
 	}
-	turn_manager.turnOrder[0] = ent;
+	player_set(ent);
 	return 1;
+}
+
+Uint8 turn_next_player()
+{
+	Entity* player;
+	int i, j;
+	player = player_get_the();
+	for (i = 0; i < turn_manager.maxPlayers; i++)
+	{
+		if (!turn_manager.turnOrder[i]) continue;
+		if (turn_manager.turnOrder[i]->team) continue;
+		if (turn_manager.turnOrder[i]->hp <= 0) continue;
+		if (turn_manager.turnOrder[i] == player) continue;
+		turn_set_player(turn_manager.turnOrder[i], 0);
+		// rotate players (0 <-- 1 <-- 2 <-- 3 <-- 4 <-- 0)
+		for (j = i; j < turn_manager.maxPlayers * i; j += i)
+		{
+			turn_manager.turnOrder[(j - i) % turn_manager.maxPlayers] =
+				turn_manager.turnOrder[j % turn_manager.maxPlayers];
+		}
+		turn_manager.turnOrder[turn_manager.maxPlayers - 1] = player;
+	}
+	return 0;
 }
 
 Uint8 turn_anybody_moving()

@@ -55,7 +55,15 @@ Entity* entity_new()
 
 void entity_free(Entity* ent)
 {
+	Level* level;
+	Sint32 idx;
 	if (!ent || !ent->_inuse) return;
+	level = level_get_the();
+	if (level)
+	{
+		idx = level_get_tile_index(level, ent->thinkPosTile.x, ent->thinkPosTile.y);
+		if (idx >= 0) level->entityMap[idx] = NULL;
+	}
 	if (ent->free) ent->free(ent);
 	model_free(ent->model);
 	memset(ent, 0, sizeof(Entity));
@@ -96,7 +104,7 @@ void entity_update(Entity* self)
 		{
 			self->position.x = self->thinkPos.x;
 			self->positionTile.x = self->thinkPosTile.x;
-			self->dir.x = 0;
+			//self->dir.x = 0;
 			self->velocity.x = 0;
 		}
 		if (self->dir.y == -1 && self->position.y >= self->thinkPos.y ||
@@ -104,17 +112,11 @@ void entity_update(Entity* self)
 		{
 			self->position.y = self->thinkPos.y;
 			self->positionTile.y = self->thinkPosTile.y;
-			self->dir.y = 0;
+			//self->dir.y = 0;
 			self->velocity.y = 0;
 		}
 	}
 
-	// Dampening
-	//if (gfc_vector3d_magnitude_squared(self->velocity) > 0.01)
-	//{
-	//	gfc_vector3d_scale(self->velocity, self->velocity, 0.8);
-	//}
-	//else gfc_vector3d_clear(self->velocity);
 	if (self->update)
 	{
 		if (self->update(self) == 1) return;

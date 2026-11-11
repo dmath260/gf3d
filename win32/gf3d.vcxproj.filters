@@ -264,6 +264,9 @@
     <ClInclude Include="..\include\battle.h">
       <Filter>Header Files\pmd</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\battle_types.h">
+      <Filter>Header Files\pmd</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\gfc\simple_logger\src\simple_logger.c">
@@ -567,6 +570,9 @@
     </None>
     <None Include="..\defs\stat.json">
       <Filter>Resource Files\Defs</Filter>
+    </None>
+    <None Include="..\config\font.cfg">
+      <Filter>Resource Files\Configs</Filter>
     </None>
   </ItemGroup>
 </Project>

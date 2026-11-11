@@ -4,7 +4,7 @@
 #include "gfc_config_def.h"
 
 #include "battle.h"
-#include "entity.h"
+#include "turn.h"
 
 typedef struct
 {
@@ -99,7 +99,7 @@ Uint8 battle_stat_chart_populate()
 		{
 			cell = sj_array_get_nth(col, i);
 			if (!cell) continue;
-			sj_get_integer_value(cell, &battle_manager.typeChart[i + j * 21]);
+			sj_get_integer_value(cell, &battle_manager.statChart[i + j * 21]);
 		}
 	}
 
@@ -165,7 +165,6 @@ BattleStat battle_stat_to_enum(const char* stat)
 
 const char *battle_enum_to_stat(BattleStat stat)
 {
-	if (!stat) return "{error}";
 	switch (stat)
 	{
 		case BS_ATTACK: return "Attack";
@@ -245,7 +244,7 @@ BattleMove* battle_load_move(const char* name)
 		battle_delete_move(move);
 		return NULL;
 	}
-	if (!sj_object_get_float(moveDef, "maxPP", &move->accuracy) || move->accuracy <= 0)
+	if (!sj_object_get_float(moveDef, "accuracy", &move->accuracy) || move->accuracy <= 0)
 	{
 		slog("Move accuracy not found or invalid");
 		battle_delete_move(move);
@@ -273,7 +272,7 @@ BattleMove* battle_load_move(const char* name)
 		if (sj_object_get_int(stat, "statChange", &j) && changes->stat != BS_ERROR &&
 			changes->target != BTG_ERROR)
 		{
-			changes->statChange = i;
+			changes->statChange = j;
 			move->statChanges = changes;
 		}
 		else
@@ -331,13 +330,14 @@ void battle_use_move(Entity* user, Entity* target, Uint8 moveIndex)
 		return;
 	}
 	move = user->moves[moveIndex];
+	user->currentPP[moveIndex]--;
 	if (!move || move->target == BTG_ERROR || move->category == BC_ERROR || !move->maxPP)
 	{
 		slog("The move failed!");
 		return;
 	}
-	slog("%s used %s!", target->name, move->name);
-	if ((move->target == BTG_ENEMY || move->target == BTG_ALL) && !target)
+	slog("%s used %s!", user->name, move->name);
+	if ((move->target == BTG_ENEMY || move->target == BTG_ALL) && (!target || target->team >= 2))
 	{
 		slog("The move failed!");
 		return;
@@ -347,72 +347,86 @@ void battle_use_move(Entity* user, Entity* target, Uint8 moveIndex)
 		slog("The move failed!");
 		return;
 	}
-	if (move->category == BC_PHYSICAL)
-	{
-		atkMod = battle_get_stat_mod(user, BS_ATTACK);
-		defMod = battle_get_stat_mod(user, BS_DEFENSE);
-		atk = user->attack * atkMod;
-		def = target->defense * defMod;
-	}
-	else if (move->category == BC_SPECIAL)
-	{
-		atkMod = battle_get_stat_mod(user, BS_SPECIALATTACK);
-		defMod = battle_get_stat_mod(user, BS_SPECIALDEFENSE);
-		atk = user->specialAttack * atkMod;
-		def = target->specialDefense * defMod;
-	}
 	acc = move->accuracy * battle_get_stat_mod(user, BS_ACCURACY);
-	acc *= battle_get_stat_mod(user, BS_EVASIVENESS);
-	pow = move->power;
-	mult = 1.0;
-	if (user->team) mult *= 0.75;
-	if (gfc_random() * 100.0 < move->criticalHitRate)
-	{
-		slog("A critical hit!");
-		mult *= 1.5;
-	}
-	if (move->type == target->type1 || move->type == target->type2) mult *= 1.5;
-	mult *= battle_type_matchup(move, target);
-	atk *= atkMod;
-	def *= defMod;
-	pow *= atkMod;
-	logInt = 10.0 * (user->level + (atk - def) / 8.0) + 500.0;
-	if (logInt < 1.0) logInt = 1.0;
-	else if (logInt > 2047.0) logInt = 2047.0;
-	baseDamage = mult * (153.0 / 256.0) * (atk + pow) - def / 2.0 + 50.0 * log(logInt) - 311.0;
-	finalDamage = round(baseDamage * (1.0 + gfc_crandom() / 8.0));
+	acc *= battle_get_stat_mod(target, BS_EVASIVENESS);
 	if (gfc_random() < acc)
 	{
-		if (finalDamage > 0)
+		if (move->power)
 		{
-			slog("%s took %i damage!", target->name, finalDamage);
-			target->hp -= finalDamage;
-			if (target->hp <= 0)
+			if (move->category == BC_PHYSICAL)
 			{
-				if (target->team) slog("%s was defeated!", target->name);
-				else slog("Oh no! %s was defeated!", target->name);
-				entity_free(target);
-				return;
+				atkMod = battle_get_stat_mod(user, BS_ATTACK);
+				defMod = battle_get_stat_mod(user, BS_DEFENSE);
+				atk = user->attack * atkMod;
+				def = target->defense * defMod;
+			}
+			else if (move->category == BC_SPECIAL)
+			{
+				atkMod = battle_get_stat_mod(user, BS_SPECIALATTACK);
+				defMod = battle_get_stat_mod(user, BS_SPECIALDEFENSE);
+				atk = user->specialAttack * atkMod;
+				def = target->specialDefense * defMod;
+			}
+			pow = move->power;
+			mult = 1.0;
+			if (user->team) mult *= 0.75;
+			if (gfc_random() * 100.0 < move->criticalHitRate)
+			{
+				slog("A critical hit!");
+				mult *= 1.5;
+			}
+			if (move->type == target->type1 || move->type == target->type2) mult *= 1.5;
+			mult *= battle_type_matchup(move, target);
+			atk *= atkMod;
+			def *= defMod;
+			pow *= atkMod;
+			logInt = 10.0 * (user->level + (atk - def) / 8.0) + 500.0;
+			if (logInt < 1.0) logInt = 1.0;
+			else if (logInt > 2047.0) logInt = 2047.0;
+			baseDamage = mult * (153.0 / 256.0) * (atk + pow) - def / 2.0 + 50.0 * log(logInt) - 311.0;
+			finalDamage = round(baseDamage * (1.0 + gfc_crandom() / 8.0));
+
+			if (finalDamage > 0)
+			{
+				slog("%s took %i damage!", target->name, finalDamage);
+				target->hp -= finalDamage;
+				if (target->hp <= 0)
+				{
+					if (target->team) slog("%s was defeated!", target->name);
+					else slog("Oh no! %s was defeated!", target->name);
+					entity_free(target);
+					return;
+				}
+			}
+		}
+
+		if (move->statChanges)
+		{
+			statTarget = BTG_ERROR;
+			if (move->statChanges->target == BTG_USER) statTarget = user;
+			else if (move->statChanges->target == BTG_ENEMY) statTarget = target;
+			if (statTarget != BTG_ERROR)
+			{
+				str = battle_enum_to_stat(move->statChanges->stat);
+				if (statTarget->statChanges[move->statChanges->stat] + move->statChanges->statChange > 20)
+				{
+					if (move->statChanges->statChange > 0)
+						slog("%s's %s cannot go any higher!", statTarget->name, str);
+					else slog("%s's %s cannot go any lower!", statTarget->name, str);
+				}
+				else
+				{
+					statTarget->statChanges[move->statChanges->stat] += move->statChanges->statChange;
+					if (move->statChanges->statChange > 0)
+						slog("%s's %s rose slightly!", statTarget->name, str);
+					else slog("%s's %s fell slightly!", statTarget->name, str);
+				}
 			}
 		}
 	}
 	else
 	{
 		slog("The move missed %s!", target->name);
-	}
-
-	if (move->statChanges)
-	{
-		if (move->statChanges->target == BTG_USER) statTarget = user;
-		else if (move->statChanges->target == BTG_ENEMY) statTarget = target;
-		if (statTarget)
-		{
-			str = battle_enum_to_stat(move->statChanges->stat);
-			statTarget->statChanges[move->statChanges->stat] += move->statChanges->statChange;
-			if (move->statChanges->statChange > 0)
-				slog("%s's %s rose slightly!", statTarget->name, str);
-			else slog("%s's %s fell slightly!", statTarget->name, str);
-		}
 	}
 }
 

@@ -71,7 +71,7 @@ void player_set(Entity* self)
 	self->data = thePlayer->data;
 	pokemon_relegate_player();
 	thePlayer = self;
-	slog("%s set as player", thePlayer->name);
+	//slog("%s set as player", thePlayer->name);
 }
 
 void player_free(Entity* self)

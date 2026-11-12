@@ -54,7 +54,8 @@ int main(int argc,char *argv[])
     Entity* player;
     Uint8 i;
     Sprite* textBG;
-    GFC_Color textBGColor;
+    GFC_Color textBGColor, textHPColor;
+    char arrows[4];
     //initialization    
     parse_arguments(argc,argv);
     init_logger("gf3d.log",0);
@@ -93,6 +94,10 @@ int main(int argc,char *argv[])
     pokemon_enemy_spawn_random();
     textBG = gf2d_sprite_load("images/text_bg.png", 200, 160, 1);
     textBGColor = gfc_color8(0, 0, 64, 255);
+    arrows[0] = '^';
+    arrows[1] = '>';
+    arrows[2] = 'v';
+    arrows[3] = '<';
 
     // main game loop    
     while(!_done)
@@ -121,7 +126,10 @@ int main(int argc,char *argv[])
         if (player)
         {
             snprintf(text, sizeof(GFC_TextLine), "%i/%i HP", player->hp, player->maxHP);
-            gf2d_font_draw_line_tag(text, FT_H1, GFC_COLOR_WHITE, gfc_vector2d(10, 10));
+            if ((float)(player->hp) / player->maxHP <= 0.25) textHPColor = GFC_COLOR_RED;
+            else if ((float)(player->hp) / player->maxHP <= 0.5) textHPColor = GFC_COLOR_YELLOW;
+            else textHPColor = GFC_COLOR_DARKGREEN;
+            gf2d_font_draw_line_tag(text, FT_H1, textHPColor, gfc_vector2d(10, 10));
             if (gfc_input_command_down("show_moves") && !turn_anybody_moving())
             {
                 gf2d_sprite_draw(
@@ -140,7 +148,8 @@ int main(int argc,char *argv[])
                     snprintf(
                         text,
                         sizeof(GFC_TextLine),
-                        "%s %i/%i PP",
+                        "%c %s %i/%i PP",
+                        arrows[i],
                         player->moves[i]->name,
                         player->currentPP[i],
                         player->moves[i]->maxPP

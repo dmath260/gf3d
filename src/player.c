@@ -102,7 +102,7 @@ int player_think(Entity* self)
 	if (!self || !self->data || turn_anybody_moving()) return 0;
 	data = (PlayerEntityData*)self->data;
 	level = level_get_the();
-	if (gfc_input_command_pressed("switch_player") && SDL_GetTicks() - swapFrame >= 1000)
+	if (gfc_input_command_pressed("switch_player") && SDL_GetTicks() - swapFrame >= 50)
 	{
 		turn_next_player();
 		return 0;

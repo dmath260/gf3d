@@ -85,10 +85,12 @@ int main(int argc,char *argv[])
     level = level_load("levels/testlevel.json");
     player_spawn(gfc_vector3d(36, 28, 0), "Mudkip");
     pokemon_spawn(gfc_vector3d(37, 28, 0), "Treecko", 0);
-    //pokemon_spawn(gfc_vector3d(35, 28, 0), "Torchic", 0);
-    //pokemon_spawn(gfc_vector3d(36, 27, 0), "Pikachu (M)", 0);
-    //pokemon_spawn(gfc_vector3d(37, 27, 0), "Skitty", 0);
-    pokemon_spawn(gfc_vector3d(36, 4, 0), "Shinx", 1);
+    pokemon_spawn(gfc_vector3d(35, 28, 0), "Torchic", 0);
+    pokemon_spawn(gfc_vector3d(36, 27, 0), "Pikachu (M)", 0);
+    pokemon_spawn(gfc_vector3d(37, 27, 0), "Skitty", 0);
+    pokemon_enemy_spawn_random();
+    pokemon_enemy_spawn_random();
+    pokemon_enemy_spawn_random();
     textBG = gf2d_sprite_load("images/text_bg.png", 200, 160, 1);
     textBGColor = gfc_color8(0, 0, 64, 255);
 

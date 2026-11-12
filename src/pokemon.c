@@ -94,6 +94,38 @@ Entity* pokemon_spawn(GFC_Vector3D position, const char* pokemonName, Uint8 team
 	return self;
 }
 
+Entity* pokemon_enemy_spawn_random()
+{
+	int i, idx;
+	GFC_Vector2D tile = {0};
+	Level* level;
+	GFC_TextWord enemyName;
+	Uint8 dist;
+	Entity* player;
+	level = level_get_the();
+	player = player_get_the();
+	for (i = 0; i < 100; i++)
+	{
+		tile.x = floor(level->tileSize.x * gfc_random());
+		tile.y = floor(level->tileSize.y * gfc_random());
+		idx = level_get_tile_index(level, tile.x, tile.y);
+		dist = max(
+			abs(tile.x - player->thinkPosTile.x),
+			abs(tile.y - player->thinkPosTile.y)
+		);
+		// spawn in rooms only, and don't spawn too close to the player
+		if (!level_is_tile_free(level, tile) || level->tileMap[idx] < 2 || dist <= level->lightRange)
+			continue;
+
+		idx = floor(level->enemyCount * gfc_random());
+		gfc_word_cpy(enemyName, level->enemyList[idx]);
+		if (!enemyName) continue;
+		return pokemon_spawn(gfc_vector3d(tile.x, tile.y, 0), enemyName, 1);
+	}
+
+	return NULL;
+}
+
 void pokemon_relegate_player()
 {
 	Entity* player;
@@ -205,7 +237,7 @@ Uint8 pokemon_step_towards_player(Entity* self)
 			self->thinkPosTile = thinkPosTileOld;
 			self->dir = dirOld;
 			self->rotation.z = SDL_atan2f(dirOld.y, dirOld.x) - GFC_PI / 2;
-			return 0;
+			return 1;
 		}
 		move = gfc_vector3d(
 			thinkPosTileOld.x - self->thinkPosTile.x,
@@ -294,8 +326,16 @@ Uint8 pokemon_step_towards_npc(Entity* self, Uint8 team)
 		self->dir = move;
 		if (!level_is_tile_free(level, self->thinkPosTile))
 		{
-			if ((dist == 1 && (!move.x || !move.y)) || !pokemon_find_valid_adjacent_tiles(self))
+			if (!pokemon_find_valid_adjacent_tiles(self))
 				continue;
+			else if (dist == 1 && (!move.x || !move.y))
+			{
+				self->thinkPos = thinkPosOld;
+				self->thinkPosTile = thinkPosTileOld;
+				self->dir = dirOld;
+				self->rotation.z = SDL_atan2f(dirOld.y, dirOld.x) - GFC_PI / 2;
+				return 1;
+			}
 			move = gfc_vector3d(
 				thinkPosTileOld.x - self->thinkPosTile.x,
 				thinkPosTileOld.y - self->thinkPosTile.y,

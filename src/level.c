@@ -72,12 +72,10 @@ Level* level_new() {
 
 Level* level_load(const char* filename)
 {
-	SJson* json;
-	SJson* data;
+	SJson* json, *data, *ent, *rows, *tiles, *tile;
 	const char* str;
 	Level* level;
-	int i, j, index;
-	SJson* rows, * tiles, * tile;
+	int i, j, index, enemyCount;
 
 	json = sj_load(filename);
 	if (!json)
@@ -132,6 +130,24 @@ Level* level_load(const char* filename)
 	}
 	sj_object_get_uint8(data, "lightRange", &level->lightRange);
 	if (!level->lightRange) level->lightRange = 2;
+
+	rows = sj_object_get_value(data, "enemies");
+	enemyCount = sj_array_count(rows);
+	if (!enemyCount)
+	{
+		level_free(level);
+		sj_free(json);
+		return NULL;
+	}
+	level->enemyList = gfc_allocate_array(sizeof(GFC_TextWord), enemyCount);
+	for (i = 0; i < enemyCount; i++)
+	{
+		ent = sj_array_get_nth(rows, i);
+		if (!ent) continue;
+		str = sj_get_string_value(ent);
+		if (str) gfc_word_cpy(level->enemyList[i], str);
+	}
+	level->enemyCount = enemyCount;
 
 	rows = sj_object_get_value(data, "tilemap");
 	level->tileSize.y = sj_array_count(rows);
@@ -233,6 +249,7 @@ void level_free(Level* level)
 	sj_free(level->json);
 	free(level->tileMap);
 	free(level->entityMap);
+	free(level->enemyList);
 	free(level);
 }
 

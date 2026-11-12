@@ -83,7 +83,14 @@ Uint8 turn_increment(Entity* ent)
 
 	for (i = turn_manager.currentEnt + 1; i < turn_manager.maxEnts; i++)
 	{
-		if (!turn_manager.turnOrder[i]) continue;
+		if (!turn_manager.turnOrder[i])
+		{
+			if (i >= turn_manager.maxPlayers && gfc_random() * 200 < 1)
+			{
+				pokemon_enemy_spawn_random();
+			}
+			continue;
+		}
 		turn_manager.currentEnt = i;
 		//slog("Turn %i, ent %i", turn_manager.currentTurn, turn_manager.currentEnt);
 		return 1;
@@ -121,8 +128,9 @@ Uint8 turn_remove(Entity* ent)
 		slog("Cannot remove entity that was not found in turn order");
 		return 0;
 	}
-	if (turn_is_my(ent)) turn_increment(ent);
-	if (j > turn_manager.currentTurn) turn_manager.currentTurn--;
+	//if (turn_is_my(ent)) turn_increment(ent); not happening w/ current code
+	//if (j < turn_manager.currentEnt && turn_manager.currentEnt != turn_manager.maxPlayers)
+	//	turn_manager.currentEnt--; this check is just bad and dumb
 
 	for (; i < turn_manager.maxEnts; i++)
 	{
@@ -191,8 +199,10 @@ Uint8 turn_next_player()
 			turn_manager.turnOrder[(j - i) % turn_manager.maxPlayers] =
 				turn_manager.turnOrder[j % turn_manager.maxPlayers];
 		}
-		turn_manager.turnOrder[turn_manager.maxPlayers - 1] = player;
+		turn_manager.turnOrder[turn_manager.maxPlayers - i] = player;
+		return 1;
 	}
+
 	return 0;
 }
 

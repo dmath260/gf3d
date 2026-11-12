@@ -27,6 +27,8 @@ typedef struct
 	Uint8* tileMap;
 	Entity** entityMap;
 	GFC_Vector2I tileSize; // how many tiles wide and tall
+	GFC_TextWord* enemyList;
+	Uint8 enemyCount;
 }Level;
 
 Uint8 level_line_test(Level* level, GFC_Edge3D edge, GFC_Vector3D* contact);

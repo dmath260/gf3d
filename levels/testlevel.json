@@ -1,7 +1,6 @@
 {
   "level": {
     "sky": "models/sky.model",
-    "_terrain": "models/terrain.model",
     "tile": "models/tile.model",
     "wall": "models/wall.model",
     "_music": "sounds/music/sound_00.wav",
@@ -9,7 +8,15 @@
       "m": [ 0, 0, -20 ],
       "s": [ 896, 512, 40 ]
     },
-    "lightRange": 4,
+    "lightRange": 6,
+    "enemies": [
+      "Turtwig",
+      "Chimchar",
+      "Piplup",
+      "Bidoof",
+      "Shinx",
+      "Buizel (M)"
+    ],
     "tileDim": 16,
     "tilemap": [
       [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],

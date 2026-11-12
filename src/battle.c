@@ -321,7 +321,7 @@ void battle_use_move(Entity* user, Entity* target, Uint8 moveIndex)
 {
 	BattleMove* move;
 	float baseDamage, mult, atk, def, pow, logInt, acc, atkMod, defMod;
-	Uint16 finalDamage;
+	Sint16 finalDamage;
 	Entity* statTarget;
 	const char* str;
 	if (!user || moveIndex > 3)
@@ -356,14 +356,14 @@ void battle_use_move(Entity* user, Entity* target, Uint8 moveIndex)
 			if (move->category == BC_PHYSICAL)
 			{
 				atkMod = battle_get_stat_mod(user, BS_ATTACK);
-				defMod = battle_get_stat_mod(user, BS_DEFENSE);
+				defMod = battle_get_stat_mod(target, BS_DEFENSE);
 				atk = user->attack * atkMod;
 				def = target->defense * defMod;
 			}
 			else if (move->category == BC_SPECIAL)
 			{
 				atkMod = battle_get_stat_mod(user, BS_SPECIALATTACK);
-				defMod = battle_get_stat_mod(user, BS_SPECIALDEFENSE);
+				defMod = battle_get_stat_mod(target, BS_SPECIALDEFENSE);
 				atk = user->specialAttack * atkMod;
 				def = target->specialDefense * defMod;
 			}
@@ -398,6 +398,7 @@ void battle_use_move(Entity* user, Entity* target, Uint8 moveIndex)
 					return;
 				}
 			}
+			else slog("The move failed!");
 		}
 
 		if (move->statChanges)
